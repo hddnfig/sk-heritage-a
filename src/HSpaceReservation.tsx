@@ -198,7 +198,7 @@ export default function HSpaceReservation() {
     <div className="hs-page">
       <header className="hs-header">
         <a className="hs-logo" href="#/" aria-label="SK Heritage 홈">
-          <strong>SK</strong><span>Heritage</span>
+          <img src="./assets/hs-logo-dark.png" alt="SK Heritage" />
         </a>
         <nav className="hs-nav" aria-label="주요 메뉴">
           <a href="#/history">그룹역사</a>
@@ -442,8 +442,8 @@ export default function HSpaceReservation() {
           </nav>
         </div>
         <div className="hs-footer-bottom">
-          <a className="hs-logo hs-logo-light" href="#/" aria-label="SK Heritage 홈"><strong>SK</strong><span>Heritage</span></a>
-          <span>©SK HERITAGE MUSEUM, All Rights Reserved.</span>
+          <a className="hs-logo hs-logo-light" href="#/" aria-label="SK Heritage 홈"><img src="./assets/hs-logo-light.png" alt="SK Heritage" /></a>
+          <span>©SK HERITAGE, All Rights Reserved.</span>
         </div>
       </footer>
     </div>
