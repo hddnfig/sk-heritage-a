@@ -177,8 +177,10 @@ function Timeline() {
   const [era, setEra] = useState(0);
   const [direction, setDirection] = useState(1);
   const [isVisible, setIsVisible] = useState(false);
+  const [displayYear, setDisplayYear] = useState("1953");
   const sectionRef = useRef<HTMLElement | null>(null);
   const wheelLock = useRef(false);
+  const lockedScrollY = useRef(0);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -203,25 +205,42 @@ function Timeline() {
   }, []);
 
   useEffect(() => {
+    const target = timelineEras[era].year;
+    if (reduce) {
+      setDisplayYear(target);
+      return;
+    }
+    const frames = target === "1970"
+      ? ["1956", "1959", "1962", "1965", "1968", "1970"]
+      : ["1967", "1964", "1961", "1958", "1955", "1953"];
+    const timers = frames.map((year, index) => window.setTimeout(() => setDisplayYear(year), 120 + index * 72));
+    return () => timers.forEach(window.clearTimeout);
+  }, [era, reduce]);
+
+  useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
     const handleWheel = (event: WheelEvent) => {
       if (Math.abs(event.deltaY) < 18) return;
       const bounds = section.getBoundingClientRect();
-      const isPinned = Math.abs(bounds.top) <= 3;
+      const isPinned = Math.abs(bounds.top) <= 12;
       if (!isPinned) return;
       if (wheelLock.current) {
         event.preventDefault();
+        if (Math.abs(window.scrollY - lockedScrollY.current) > 1) window.scrollTo(0, lockedScrollY.current);
         return;
       }
       const step = event.deltaY > 0 ? 1 : -1;
       const next = Math.max(0, Math.min(timelineEras.length - 1, era + step));
       if (next === era) return;
       event.preventDefault();
+      const exactTop = window.scrollY + bounds.top;
+      window.scrollTo(0, exactTop);
+      lockedScrollY.current = exactTop;
       wheelLock.current = true;
       setDirection(step);
       setEra(next);
-      window.setTimeout(() => { wheelLock.current = false; }, reduce ? 80 : 1650);
+      window.setTimeout(() => { wheelLock.current = false; }, reduce ? 80 : 1750);
     };
     window.addEventListener("wheel", handleWheel, { passive: false, capture: true });
     return () => window.removeEventListener("wheel", handleWheel, { capture: true });
@@ -253,7 +272,7 @@ function Timeline() {
           ><motion.img src={item.image} alt={item.title} animate={{ scale: active === index ? 1.035 : 1 }} transition={spring} /><div><h3>{item.title}</h3><p>{item.body}</p></div></motion.article>
         </AnimatePresence>
       ))}
-      <div className="timeline-year"><AnimatePresence initial={false} mode="wait"><motion.span key={currentEra.year} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={swift}>{currentEra.year}</motion.span></AnimatePresence></div>
+      <div className="timeline-year"><div className="timeline-year-wheel"><AnimatePresence initial={false} custom={direction}><motion.span key={displayYear} custom={direction} initial={{ y: direction * 64, rotateX: direction * 78, opacity: 0 }} animate={{ y: 0, rotateX: 0, opacity: 1 }} exit={{ y: direction * -64, rotateX: direction * -78, opacity: 0 }} transition={{ duration: reduce ? 0.01 : 0.085, ease: [0.22, 1, 0.36, 1] }}>{displayYear}</motion.span></AnimatePresence></div></div>
       <div className="year-navigation" aria-label="연도 선택">
         <div className="year-bars" aria-hidden="true">{Array.from({ length: 12 }).map((_, i) => <i key={i} className={i === currentEra.activeTick ? "active" : ""} />)}</div>
         <div className="year-hit-zones">{timelineEras.map((item, index) => <button key={item.year} type="button" aria-label={`${item.year}년 보기`} onClick={() => { setDirection(index > era ? 1 : -1); setEra(index); }} />)}</div>
