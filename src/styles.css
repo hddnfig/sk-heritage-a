@@ -13,14 +13,14 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: auto !important; }
+html { scroll-behavior: auto !important; scroll-snap-type: y proximity; }
 body { margin: 0; min-width: 320px; background: var(--paper); overflow-x: hidden; }
 button, a { font: inherit; color: inherit; }
 button { padding: 0; border: 0; background: transparent; cursor: pointer; }
 a { text-decoration: none; }
 img { display: block; }
 main { width: 1920px; overflow: hidden; }
-.canvas-section { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+.canvas-section { position: relative; width: 1920px; height: 1080px; overflow: hidden; scroll-snap-align: start; scroll-snap-stop: always; }
 
 .hero { background: var(--sand); }
 .hero-title-symbol { position: absolute; left: 20px; top: 41px; width: min(46.72vw, 897px); height: min(7.19vw, 138px); }
@@ -73,7 +73,8 @@ main { width: 1920px; overflow: hidden; }
 .history-next-image img { width: 789px; height: 742px; max-width: none; object-fit: cover; object-position: left; transform-origin: center; }
 .history-alt .history-next-image img { width: 1182px; }
 
-.timeline { background: var(--paper); }
+.timeline-scroll-stage { position: relative; width: 1920px; height: 1620px; background: var(--paper); scroll-snap-align: start; scroll-snap-stop: always; }
+.timeline { position: sticky; top: 0; z-index: 2; background: var(--paper); scroll-snap-align: none; }
 .timeline::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to right, transparent 509px, #000 509px, #000 510px, transparent 510px, transparent 999px, #000 999px, #000 1000px, transparent 1000px, transparent 1595px, #000 1595px, #000 1596px, transparent 1596px); pointer-events: none; }
 .timeline-statement { position: absolute; left: 20px; top: 20px; width: 396px; margin: 0; font-size: 32px; line-height: 1.35; font-weight: 500; }
 .timeline-statement span { display: block; white-space: nowrap; }
@@ -190,7 +191,8 @@ main { width: 1920px; overflow: hidden; }
 @media (min-width: 1921px) {
   main,
   .canvas-section,
-  .footer { width: 100%; }
+  .footer,
+  .timeline-scroll-stage { width: 100%; }
 
   .hero-peek { width: calc(100% - 1759px); }
 
@@ -226,7 +228,9 @@ main { width: 1920px; overflow: hidden; }
 }
 
 @media (max-width: 1919px) {
+  .timeline-scroll-stage { width: 1920px; height: calc(1620px * (100vw / 1920)); }
   .canvas-section { width: 1920px; height: 1080px; min-height: 1080px; transform-origin: top left; transform: scale(calc(100vw / 1920)); margin-bottom: calc((100vw / 1920 * 1080px) - 1080px); }
+  .timeline-scroll-stage .timeline { margin-bottom: 0; }
   .footer { width: 1920px; transform-origin: top left; transform: scale(calc(100vw / 1920)); margin-bottom: calc((100vw / 1920 * 374px) - 374px); }
 }
 

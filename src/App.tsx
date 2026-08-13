@@ -170,22 +170,28 @@ function Timeline() {
   const [active, setActive] = useState<number | null>(null);
   const [era, setEra] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement | null>(null);
   const wheelLock = useRef(false);
 
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
-    let wasInside = false;
+    let wasVisible = false;
     const observer = new IntersectionObserver(([entry]) => {
-      if (entry.intersectionRatio >= 0.55 && !wasInside) {
-        wasInside = true;
-        setDirection(1);
-        setEra(0);
-      } else if (entry.intersectionRatio < 0.1) {
-        wasInside = false;
+      if (entry.intersectionRatio >= 0.12) {
+        if (!wasVisible) {
+          setEra(0);
+          setDirection(1);
+        }
+        wasVisible = true;
+        setIsVisible(true);
       }
-    }, { threshold: [0.1, 0.55] });
+      if (entry.intersectionRatio < 0.04) {
+        wasVisible = false;
+        setIsVisible(false);
+      }
+    }, { threshold: [0.04, 0.12, 0.55] });
     observer.observe(section);
     return () => observer.disconnect();
   }, []);
@@ -194,9 +200,14 @@ function Timeline() {
     const section = sectionRef.current;
     if (!section) return;
     const handleWheel = (event: WheelEvent) => {
-      if (Math.abs(event.deltaY) < 20 || wheelLock.current) return;
-      const sectionTop = section.getBoundingClientRect().top;
-      if (Math.abs(sectionTop) > 4) return;
+      if (Math.abs(event.deltaY) < 18) return;
+      const bounds = section.getBoundingClientRect();
+      const isPinned = Math.abs(bounds.top) <= 3;
+      if (!isPinned) return;
+      if (wheelLock.current) {
+        event.preventDefault();
+        return;
+      }
       const step = event.deltaY > 0 ? 1 : -1;
       const next = Math.max(0, Math.min(timelineEras.length - 1, era + step));
       if (next === era) return;
@@ -204,17 +215,18 @@ function Timeline() {
       wheelLock.current = true;
       setDirection(step);
       setEra(next);
-      window.setTimeout(() => { wheelLock.current = false; }, reduce ? 80 : 2100);
+      window.setTimeout(() => { wheelLock.current = false; }, reduce ? 80 : 1650);
     };
-    section.addEventListener("wheel", handleWheel, { passive: false });
-    return () => section.removeEventListener("wheel", handleWheel);
+    window.addEventListener("wheel", handleWheel, { passive: false, capture: true });
+    return () => window.removeEventListener("wheel", handleWheel, { capture: true });
   }, [era, reduce]);
 
   const currentEra = timelineEras[era];
   return (
+    <div className="timeline-scroll-stage">
     <section ref={sectionRef} className="canvas-section timeline" id="space">
-      <AnimatePresence initial={false} custom={direction} mode="sync">
-        <motion.h2 key={currentEra.year} className="timeline-statement" custom={direction} variants={{ enter: (d: number) => ({ x: d * 220, opacity: 0 }), show: { x: 0, opacity: 1 }, exit: (d: number) => ({ x: d * -160, opacity: 0 }) }} initial="enter" animate="show" exit="exit" transition={{ duration: reduce ? 0.01 : 1.35, ease: [0.16, 1, 0.3, 1] }}>{currentEra.statement.map((line) => <span key={line}>{line}</span>)}</motion.h2>
+      <AnimatePresence custom={direction} mode="sync">
+        <motion.h2 key={currentEra.year} className="timeline-statement" custom={direction} variants={{ enter: (d: number) => ({ x: d * 220, opacity: 0 }), show: { x: 0, opacity: 1 }, exit: (d: number) => ({ x: d * -160, opacity: 0 }) }} initial="enter" animate={isVisible ? "show" : "enter"} exit="exit" transition={{ duration: reduce ? 0.01 : 1.35, ease: [0.16, 1, 0.3, 1] }}>{currentEra.statement.map((line) => <span key={line}>{line}</span>)}</motion.h2>
       </AnimatePresence>
       {currentEra.items.map((item, index) => (
         <AnimatePresence initial={false} custom={{ direction, index }} mode="sync" key={item.slot}>
@@ -228,7 +240,7 @@ function Timeline() {
               exit: ({ direction: d, index: i }: { direction: number; index: number }) => ({ x: d * -(1520 + i * 140), opacity: 0, transition: { duration: reduce ? 0.01 : 1.3, delay: reduce ? 0 : i * 0.1, ease: [0.4, 0, 0.2, 1] } }),
             }}
             initial="enter"
-            animate="show"
+            animate={isVisible ? "show" : "enter"}
             exit="exit"
             onHoverStart={() => setActive(index)}
             onHoverEnd={() => setActive(null)}
@@ -244,6 +256,7 @@ function Timeline() {
         <span>연혁 건너뛰기</span><i><img src="/assets/timeline-skip-arrow.svg" alt="" /></i>
       </motion.a>
     </section>
+    </div>
   );
 }
 
