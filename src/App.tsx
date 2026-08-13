@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 const swift = { duration: 0.72, ease: [0.16, 1, 0.3, 1] } as const;
@@ -140,9 +140,9 @@ function History() {
             </motion.div>
           </AnimatePresence>
         </div>
-        <motion.div className="history-next" whileHover={{ x: -60 }} transition={spring}>
-          <div><span>{slide.nextPerson}</span><img className="large-arrow-static" src="/assets/large-arrow.png" alt="" /></div><img src={slide.nextImage} alt={slide.nextPerson} />
-        </motion.div>
+        <div className="history-next">
+          <div><span>{slide.nextPerson}</span><motion.img className="large-arrow-static" src="/assets/large-arrow.png" alt="" whileHover={{ x: 12 }} transition={spring} /></div><img src={slide.nextImage} alt={slide.nextPerson} />
+        </div>
       </div>
     </section>
   );
@@ -154,14 +154,40 @@ const timelineItems = [
   { className: "timeline-cdma", image: "/assets/cdma-v2.png", title: "세계 최초 CDMA 이동전화 상용화", body: "한국이동통신(현 SK텔레콤)은 세계 최초로 CDMA 이동전화 상용 서비스에 성공, 세계 CDMA 리더로 부상했습니다." },
 ];
 
+const timelineEras = [
+  { year: "1953", items: timelineItems },
+  { year: "1976", items: [timelineItems[1], timelineItems[2], timelineItems[0]] },
+  { year: "1996", items: [timelineItems[2], timelineItems[0], timelineItems[1]] },
+];
+
 function Timeline() {
   const [active, setActive] = useState<number | null>(null);
+  const [era, setEra] = useState(0);
+  const wheelLock = useRef(false);
+  const changeEra = (step: number) => setEra((current) => Math.max(0, Math.min(timelineEras.length - 1, current + step)));
+  const handleWheel = (event: React.WheelEvent<HTMLElement>) => {
+    if (Math.abs(event.deltaY) < 20 || wheelLock.current) return;
+    const next = Math.max(0, Math.min(timelineEras.length - 1, era + (event.deltaY > 0 ? 1 : -1)));
+    if (next === era) return;
+    event.preventDefault();
+    wheelLock.current = true;
+    setEra(next);
+    window.setTimeout(() => { wheelLock.current = false; }, 720);
+  };
+  const currentEra = timelineEras[era];
   return (
-    <section className="canvas-section timeline" id="space">
+    <section className="canvas-section timeline" id="space" onWheel={handleWheel}>
       <h2 className="timeline-statement">한 세대의 신념이,<br />다음 시대의 가치로.</h2>
-      {timelineItems.map((item, index) => <motion.article key={item.className} className={`timeline-record ${item.className}`} onHoverStart={() => setActive(index)} onHoverEnd={() => setActive(null)} animate={{ opacity: active !== null && active !== index ? 0.62 : 1 }} transition={swift}><motion.img src={item.image} alt={item.title} animate={{ scale: active === index ? 1.035 : 1 }} transition={spring} /><div><h3>{item.title}</h3><p>{item.body}</p></div></motion.article>)}
-      <div className="timeline-year">1953</div>
-      <div className="year-bars" aria-hidden="true">{Array.from({ length: 12 }).map((_, i) => <i key={i} />)}</div>
+      <AnimatePresence initial={false} mode="popLayout">
+        <motion.div className="timeline-era" key={currentEra.year} initial={{ x: 260, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -260, opacity: 0 }} transition={swift}>
+          {currentEra.items.map((item, index) => <motion.article key={`${currentEra.year}-${item.className}`} className={`timeline-record ${item.className}`} onHoverStart={() => setActive(index)} onHoverEnd={() => setActive(null)}><motion.img src={item.image} alt={item.title} animate={{ scale: active === index ? 1.035 : 1 }} transition={spring} /><div><h3>{item.title}</h3><p>{item.body}</p></div></motion.article>)}
+        </motion.div>
+      </AnimatePresence>
+      <motion.div className="timeline-year" key={currentEra.year} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={swift}>{currentEra.year}</motion.div>
+      <div className="year-navigation" aria-label="연도 선택">
+        <div className="year-bars" aria-hidden="true">{Array.from({ length: 12 }).map((_, i) => <i key={i} className={i === era * 4 ? "active" : ""} />)}</div>
+        <div className="year-hit-zones">{timelineEras.map((item, index) => <button key={item.year} type="button" aria-label={`${item.year}년 보기`} onClick={() => setEra(index)} />)}</div>
+      </div>
     </section>
   );
 }
@@ -193,7 +219,7 @@ function News() {
       <article className="exhibition"><div><h2>김수자 개인전 〈호흡 - 선혜원〉 개막</h2><p>고요한 숨결과 명상이 어우러진 공간은 과거와 현재, 존재와 공간이 교차하는 새로운 경험을 제시하며, 실재와 허상이 혼재된 유동적인 건축 환경을 형성한다.</p></div><a href="#top"><img src="/assets/cta-arrow.png" alt="" /><span>Exhibition</span></a><motion.img src="/assets/exhibition-v2.png" alt="김수자 개인전" whileHover={{ scale: 1.035 }} transition={spring} /></article>
       <div className="philosophy"><h2>경영 철학</h2><motion.img className="philosophy-photo" src="/assets/spirit-v2.png" alt="경영 철학" whileHover={{ scale: 1.025 }} transition={spring} /><motion.p className="philosophy-note" whileHover={{ x: 10 }} transition={spring}>최고의 경쟁력을 보유하고 장기적 생존 조건을 확보하여 지속적으로 경제적 가치, 사회적 가치, 구성원 행복을 창출해 나가는 회사가 SUPEX Company 입니다.</motion.p><div className="philosophy-type"><img src="/assets/skms-symbol.png" alt="SKMS" /><i /><img src="/assets/supex-symbol.png" alt="SUPEX" /></div></div>
       {[{ title: "선혜원 여름 관람\n예약 안내", body: "푸른 자연과 전통 건축이 조화를 이루는 선혜원의 여름 풍경을 만나보세요. 공간에 깃든 역사와 이야기를 깊이 경험할 수 있도록 사전 예약제로 관람 프로그램을 운영합니다." }, { title: "SK 디지털 헤리티지\n아카이브 오픈", body: "SK의 성장 과정과 시대별 주요 순간을 담은 디지털 헤리티지 아카이브가 새롭게 문을 열었습니다. 창업 초기의 기록부터 주요 소장품에 이르기까지 SK의 역사와 정신을 온라인에서 폭넓게 만나볼 수 있습니다." }].map((item, index) => <motion.article key={item.title} className={`news-card card-${index}`} onHoverStart={() => setHovered(index)} onHoverEnd={() => setHovered(null)} animate={{ backgroundColor: hovered === index ? "#f05327" : "#e3edf4", color: hovered === index ? "#fff" : "#000" }} transition={swift}><h3>{item.title.split("\n").map((line) => <span key={line}>{line}</span>)}</h3><p>{item.body}</p></motion.article>)}
-      <div className="news-list">{["시간을 잇는 기록,\nSK 헤리티지 특별전", "선혜원의\n건축과 예술", "사진으로 만나는\nSK의 시작"].map((title) => <motion.a href="#top" key={title} whileHover={{ x: 12 }} transition={spring}>{title.split("\n").map((line) => <span key={line}>{line}</span>)}</motion.a>)}</div>
+      <div className="news-list">{["시간을 잇는 기록,\nSK 헤리티지 특별전", "선혜원의\n건축과 예술", "사진으로 만나는\nSK의 시작"].map((title) => <a href="#top" key={title}>{title.split("\n").map((line) => <span key={line}>{line}</span>)}</a>)}</div>
     </section>
   );
 }
