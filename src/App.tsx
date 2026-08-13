@@ -1,10 +1,31 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 const assetUrl = (filename: string) => `./assets/${filename}`;
 
 const swift = { duration: 0.72, ease: [0.16, 1, 0.3, 1] } as const;
 const spring = { type: "spring", stiffness: 145, damping: 24, mass: 0.9 } as const;
+
+function DeferredSection({ id, className, children }: { id: string; className?: string; children: ReactNode }) {
+  const reduce = useReducedMotion();
+  const placeholderRef = useRef<HTMLDivElement | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const placeholder = placeholderRef.current;
+    if (!placeholder || mounted) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      setMounted(true);
+      observer.disconnect();
+    }, { rootMargin: "0px 0px -30% 0px", threshold: 0.04 });
+    observer.observe(placeholder);
+    return () => observer.disconnect();
+  }, [mounted]);
+
+  if (!mounted) return <div ref={placeholderRef} id={id} className={`deferred-section-placeholder ${className ?? ""}`} aria-hidden="true" />;
+  return <motion.div className={`deferred-section-content ${className ?? ""}`} initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduce ? 0 : 0.72, ease: [0.16, 1, 0.3, 1] }}>{children}</motion.div>;
+}
 
 const heroSlides = [
   {
@@ -422,5 +443,11 @@ function Footer() {
 
 export function App() {
   const reduce = useReducedMotion();
-  return <main data-reduced-motion={reduce ? "true" : "false"}><Hero /><History /><Timeline /><Collection /><News /><Footer /></main>;
+  return <main data-reduced-motion={reduce ? "true" : "false"}>
+    <Hero />
+    <DeferredSection id="history"><History /></DeferredSection>
+    <DeferredSection id="space" className="deferred-timeline"><Timeline /></DeferredSection>
+    <DeferredSection id="collection"><Collection /></DeferredSection>
+    <DeferredSection id="news"><News /><Footer /></DeferredSection>
+  </main>;
 }
