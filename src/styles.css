@@ -63,6 +63,7 @@ main { width: 1920px; overflow: hidden; }
 .history-frame { position: absolute; inset: -1px 20px 0; display: grid; grid-template-columns: 980px 596px 304px; overflow: hidden; }
 .history-primary, .history-copy, .history-next { position: relative; border-right: 1px solid #000; overflow: hidden; }
 .history-primary { padding-top: 58px; }
+.history-primary::after { content: ""; position: absolute; z-index: 1; top: 58px; right: 0; bottom: 0; width: 20px; background: #fff; pointer-events: none; }
 .history-meta { position: absolute; left: 0; right: 20px; top: 20px; height: 18px; z-index: 2; display: flex; justify-content: space-between; font-size: 18px; line-height: 1; }
 .history-primary > img { width: 1596px; height: 1002px; max-width: none; margin-left: -300px; object-fit: cover; }
 .history-alt .history-primary > img { width: 1378px; height: 1002px; margin-left: -156px; }
