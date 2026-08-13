@@ -1,0 +1,12 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+
+# Local visual QA captures
+local-v2-*.png
+diff-*.png
+v2-compare-*.jpg
+prototype-*.png
+vite.config.js
+vite.config.d.ts
