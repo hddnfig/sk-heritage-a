@@ -179,13 +179,22 @@ main { width: 1920px; overflow: hidden; }
 .asset-arrow-large img { width: 148px; height: 44px; }
 .asset-arrow-small { width: 68px; height: 24px; }
 .asset-arrow-small img { width: 68px; height: 24px; }
-.collection-object-stage { position: absolute; left: 49px; top: 226px; width: 224px; height: 987px; }
-.side-object { position: absolute; display: block; overflow: hidden; }
+.collection-object-stage { position: absolute; left: 49px; top: 226px; width: 224px; height: 854px; overflow: hidden; }
+.collection-object-track { display: flex; width: 224px; flex-direction: column; align-items: center; gap: 132px; animation: collection-object-roll 52s linear infinite; will-change: transform; }
+.collection-object-track:hover { animation-play-state: paused; }
+.side-object { position: relative; display: block; flex: 0 0 auto; overflow: hidden; }
 .side-object > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; }
 .color-layer { opacity: 0; }
-.side-object.rooster { left: 0; top: 0; width: 224px; height: 220px; }
-.side-object.glasses { left: 1px; top: 341px; width: 222px; height: 96.894px; }
-.side-object.clock { left: 29.5px; top: 558.894px; width: 165px; height: 166px; }
+.side-object.rooster { width: 224px; height: 220px; }
+.side-object.glasses { width: 222px; height: 96.894px; }
+.side-object.clock { width: 165px; height: 166px; }
+.side-object.gift { width: 174px; height: 159px; }
+.side-object.watch { width: 174px; height: 152px; }
+
+@keyframes collection-object-roll {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(0, -1453.894px, 0); }
+}
 
 .news { background: var(--ice); }
 .exhibition { position: absolute; left: 0; top: 0; width: 510px; height: 1080px; border-right: 1px solid #000; overflow: hidden; }

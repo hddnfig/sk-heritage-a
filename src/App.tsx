@@ -496,9 +496,11 @@ function Timeline() {
 }
 
 const sideObjects = [
-  { className: "rooster", image: assetUrl("object-rooster-v3.png"), colorImage: assetUrl("object-rooster-color-v4.png"), label: "황금 장식품" },
-  { className: "glasses", image: assetUrl("object-glasses-v4.png"), colorImage: assetUrl("object-glasses-color-v5.png"), label: "안경과 소장품" },
-  { className: "clock", image: assetUrl("object-clock-v3.png"), colorImage: assetUrl("object-clock-color-v4.png"), label: "탁상시계" },
+  { className: "rooster", image: assetUrl("object-rooster-roll.png"), colorImage: assetUrl("object-rooster-roll-hover.png"), label: "황금 장식품" },
+  { className: "glasses", image: assetUrl("object-glasses-roll.png"), colorImage: assetUrl("object-glasses-roll-hover.png"), label: "안경과 소장품" },
+  { className: "clock", image: assetUrl("object-clock-roll.png"), colorImage: assetUrl("object-clock-roll-hover.png"), label: "탁상시계" },
+  { className: "gift", image: assetUrl("object-gift-roll.png"), colorImage: assetUrl("object-gift-roll-hover.png"), label: "기념 소장품" },
+  { className: "watch", image: assetUrl("object-watch-roll.png"), colorImage: assetUrl("object-watch-roll-hover.png"), label: "손목시계" },
 ];
 
 function Collection() {
@@ -518,7 +520,34 @@ function Collection() {
           </div>
         </div>
       </div>
-      <div className="collection-side"><div className="collection-side-head"><span>전시/소장품</span><AssetArrowButton onClick={() => undefined} label="다음 소장품" /></div><div className="collection-object-stage">{sideObjects.map((item) => <motion.button type="button" key={item.className} className={`side-object ${item.className}`} onHoverStart={() => setHovered(item.className)} onHoverEnd={() => setHovered(null)} whileHover={{ scale: 1.08 }} transition={spring}><img src={item.image} alt={item.label} /><motion.img className="color-layer" src={item.colorImage} alt="" animate={{ opacity: hovered === item.className ? 1 : 0 }} transition={{ duration: .45, ease: [0.16, 1, 0.3, 1] }} /></motion.button>)}</div></div>
+      <div className="collection-side">
+        <div className="collection-side-head"><span>전시/소장품</span><AssetArrowButton onClick={() => undefined} label="다음 소장품" /></div>
+        <div className="collection-object-stage">
+          <div className="collection-object-track">
+            {[0, 1].flatMap((loop) => sideObjects.map((item) => (
+              <motion.button
+                type="button"
+                key={`${loop}-${item.className}`}
+                className={`side-object ${item.className}`}
+                aria-label={item.label}
+                aria-hidden={loop === 1}
+                tabIndex={loop === 1 ? -1 : 0}
+                onHoverStart={() => setHovered(`${loop}-${item.className}`)}
+                onHoverEnd={() => setHovered(null)}
+              >
+                <img src={item.image} alt="" />
+                <motion.img
+                  className="color-layer"
+                  src={item.colorImage}
+                  alt=""
+                  animate={{ opacity: hovered === `${loop}-${item.className}` ? 1 : 0 }}
+                  transition={{ duration: .42, ease: [0.16, 1, 0.3, 1] }}
+                />
+              </motion.button>
+            )))}
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
