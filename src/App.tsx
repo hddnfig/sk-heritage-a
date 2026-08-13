@@ -113,6 +113,7 @@ function Hero() {
 function History() {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [nextHovered, setNextHovered] = useState(false);
   const slide = historySlides[index];
   const move = (step: number) => { setDirection(step); setIndex((current) => (current + step + historySlides.length) % historySlides.length); };
   return (
@@ -132,10 +133,10 @@ function History() {
             </motion.div>
           </AnimatePresence>
         </div>
-        <button className="history-next" type="button" onClick={() => move(1)} aria-label={`${slide.nextPerson} 보기`}>
-          <div><span>{slide.nextPerson}</span><motion.img className="large-arrow-static" src="/assets/large-arrow.png" alt="" whileHover={{ x: 12 }} transition={spring} /></div>
-          <AnimatePresence initial={false} mode="popLayout"><motion.img key={slide.nextImage} src={slide.nextImage} alt={slide.nextPerson} initial={{ x: -90, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 90, opacity: 0 }} transition={spring} /></AnimatePresence>
-        </button>
+        <motion.button className="history-next" type="button" onClick={() => move(1)} aria-label={`${slide.nextPerson} 보기`} onHoverStart={() => setNextHovered(true)} onHoverEnd={() => setNextHovered(false)} animate={{ backgroundColor: nextHovered ? "rgba(240, 83, 39, 0.09)" : "rgba(255, 255, 255, 0)" }} transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}>
+          <div><span>{slide.nextPerson}</span><motion.img className="large-arrow-static" src="/assets/large-arrow.png" alt="" animate={nextHovered ? { x: [0, 24, 5, 24, 0], opacity: [1, .55, 1, .7, 1] } : { x: 0, opacity: 1 }} transition={nextHovered ? { duration: 1.45, ease: "easeInOut", repeat: Infinity } : spring} /></div>
+          <div className="history-next-image"><AnimatePresence initial={false} mode="popLayout"><motion.img key={slide.nextImage} src={slide.nextImage} alt={slide.nextPerson} initial={{ x: -90, opacity: 0 }} animate={{ x: 0, opacity: 1, scale: nextHovered ? 1.065 : 1 }} exit={{ x: 90, opacity: 0 }} transition={spring} /></AnimatePresence></div>
+        </motion.button>
       </div>
     </section>
   );
