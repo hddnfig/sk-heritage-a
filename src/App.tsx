@@ -125,11 +125,14 @@ function Hero() {
     setPeekHovered(false);
     setTransitioning(true);
   }, [index, transitioning]);
-  const finishMove = () => {
+  useEffect(() => {
     if (!transitioning) return;
-    setIndex(targetIndex);
-    setTransitioning(false);
-  };
+    const completionTimer = window.setTimeout(() => {
+      setIndex(targetIndex);
+      setTransitioning(false);
+    }, reduce ? 0 : 1980);
+    return () => window.clearTimeout(completionTimer);
+  }, [reduce, targetIndex, transitioning]);
   const reveal = (delay: number, x = 0, y = 18) => reduce
     ? { initial: false as const }
     : {
@@ -211,7 +214,6 @@ function Hero() {
                   x: { duration: 0 },
                   opacity: { duration: 0.82, delay: initialPanelReveal.current ? 2.72 : 0.48, ease: [0.16, 1, 0.3, 1] },
                 }}
-          onAnimationComplete={finishMove}
           aria-hidden={!transitioning}
         >
           <div className="hero-image"><img className={`hero-asset-${incomingSlide.imageClass}`} src={incomingSlide.image} alt="" /></div>
