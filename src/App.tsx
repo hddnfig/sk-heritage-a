@@ -315,8 +315,7 @@ function Timeline() {
   const gate = useRef<"free" | "entry" | "ready" | "transition">("free");
   const lockedScrollY = useRef(0);
   const gateTimer = useRef<number | undefined>(undefined);
-  const motionDoneAt = useRef(0);
-  const lastDiscardedWheelAt = useRef(0);
+  const lockReleaseAt = useRef(0);
   const sequenceTimers = useRef<number[]>([]);
   const previousEra = useRef(0);
   const entrySnapArmed = useRef(true);
@@ -375,16 +374,11 @@ function Timeline() {
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
-    const freshInputGap = reduce ? 20 : 360;
     const settleGate = (nextGate: "ready" | "free") => {
       if (gateTimer.current !== undefined) window.clearTimeout(gateTimer.current);
       const check = () => {
         const now = performance.now();
-        const wait = Math.max(
-          motionDoneAt.current - now,
-          lastDiscardedWheelAt.current + freshInputGap - now,
-          0,
-        );
+        const wait = Math.max(lockReleaseAt.current - now, 0);
         if (wait > 0) {
           gateTimer.current = window.setTimeout(check, Math.max(16, wait));
           return;
@@ -405,9 +399,15 @@ function Timeline() {
     };
     const handleWheel = (event: WheelEvent) => {
       if (Math.abs(event.deltaY) < 18) return;
+      if (event.deltaY < 0) {
+        if (gateTimer.current !== undefined) window.clearTimeout(gateTimer.current);
+        gateTimer.current = undefined;
+        gate.current = "free";
+        delete document.documentElement.dataset.timelineLocked;
+        return;
+      }
       if (gate.current === "entry" || gate.current === "transition") {
         event.preventDefault();
-        lastDiscardedWheelAt.current = performance.now();
         holdPinnedPosition();
         return;
       }
@@ -421,8 +421,7 @@ function Timeline() {
         entrySnapArmed.current = false;
         lockedScrollY.current = exactTop;
         gate.current = "entry";
-        lastDiscardedWheelAt.current = performance.now();
-        motionDoneAt.current = performance.now() + (reduce ? 40 : 2100);
+        lockReleaseAt.current = performance.now() + (reduce ? 32 : 1680);
         document.documentElement.dataset.timelineLocked = "true";
         settleGate("ready");
         return;
@@ -441,7 +440,6 @@ function Timeline() {
       window.scrollTo(0, exactTop);
       lockedScrollY.current = exactTop;
       gate.current = "transition";
-      lastDiscardedWheelAt.current = performance.now();
       document.documentElement.dataset.timelineLocked = "true";
       setDirection(step);
       setPhase("exit");
@@ -451,7 +449,8 @@ function Timeline() {
       const exitDuration = reduce ? 20 : 1260;
       const yearDuration = reduce ? 20 : 620;
       const enterDuration = reduce ? 30 : 1960;
-      motionDoneAt.current = performance.now() + exitDuration + yearDuration + enterDuration;
+      const transitionDuration = exitDuration + yearDuration + enterDuration;
+      lockReleaseAt.current = performance.now() + transitionDuration * 0.8;
       sequenceTimers.current.push(window.setTimeout(() => {
         setEra(next);
         setPhase("year");
