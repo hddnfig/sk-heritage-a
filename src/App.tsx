@@ -177,7 +177,7 @@ function Hero() {
               ? { duration: 0.58, ease: [0.76, 0, 0.24, 1] }
               : initialPanelReveal.current
                 ? { duration: 0.82, delay: 1.5, ease: [0.16, 1, 0.3, 1] }
-                : { duration: 0.58, ease: [0.76, 0, 0.24, 1] }}
+                : { duration: 0 }}
           onAnimationComplete={() => {
             if (!transitioning) initialPanelReveal.current = false;
           }}
