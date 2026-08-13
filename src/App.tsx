@@ -357,7 +357,7 @@ function Timeline() {
 
 const sideObjects = [
   { className: "rooster", image: assetUrl("object-rooster-v3.png"), colorImage: assetUrl("object-rooster-color-v4.png"), label: "황금 장식품" },
-  { className: "glasses", image: assetUrl("object-glasses-v3.png"), colorImage: assetUrl("object-glasses-color-v4.png"), label: "안경과 소장품" },
+  { className: "glasses", image: assetUrl("object-glasses-v4.png"), colorImage: assetUrl("object-glasses-color-v5.png"), label: "안경과 소장품" },
   { className: "clock", image: assetUrl("object-clock-v3.png"), colorImage: assetUrl("object-clock-color-v4.png"), label: "탁상시계" },
 ];
 
