@@ -384,13 +384,18 @@ function Collection() {
 }
 
 function News() {
+  const [hovered, setHovered] = useState<string | null>(null);
+  const newsCards = [
+    { key: "summer", title: "선혜원 여름 관람\n예약 안내", image: assetUrl("news-card-summer-v3.png"), hoverImage: assetUrl("news-card-summer-hover-v4.png"), alt: "선혜원", body: "푸른 자연과 전통 건축이 조화를 이루는 선혜원의 여름 풍경을 만나보세요. 공간에 깃든 역사와 이야기를 깊이 경험할 수 있도록 사전 예약제로 관람 프로그램을 운영합니다." },
+    { key: "archive", title: "SK 디지털 헤리티지\n아카이브 오픈", image: assetUrl("news-card-archive-v3.png"), hoverImage: assetUrl("news-card-archive-hover-v4.png"), alt: "SK 디지털 헤리티지 아카이브", body: "SK의 성장 과정과 시대별 주요 순간을 담은 디지털 헤리티지 아카이브가 새롭게 문을 열었습니다. 창업 초기의 기록부터 주요 소장품에 이르기까지 SK의 역사와 정신을 온라인에서 폭넓게 만나볼 수 있습니다." },
+  ];
   return (
     <section className="canvas-section news" id="news">
-      <article className="exhibition">
+      <motion.article className="exhibition" onHoverStart={() => setHovered("exhibition")} onHoverEnd={() => setHovered(null)} animate={{ backgroundColor: hovered === "exhibition" ? "#000" : "#e3edf4", color: hovered === "exhibition" ? "#fff" : "#000", borderColor: hovered === "exhibition" ? "#fff" : "#000" }} transition={swift}>
         <div className="exhibition-copy"><h2>김수자 개인전 〈호흡 – 선혜원〉 개막</h2><p>고요한 숨결과 명상이 어우러진 공간은 과거와 현재, 존재와 공간이 교차하는 새로운 경험을 제시하며, 실재와 허상이 혼재된 유동적인 건축 환경을 형성한다.</p></div>
         <a href="#"><img src={assetUrl("cta-arrow.png")} alt="" /><strong>자세히 보기</strong></a>
-        <motion.div className="exhibition-image" whileHover="hover"><motion.img src={assetUrl("news-exhibition-v3.png")} alt="김수자 개인전" variants={{ hover: { scale: 1.045 } }} transition={spring} /></motion.div>
-      </article>
+        <div className="exhibition-image"><motion.img src={assetUrl("news-exhibition-hover-v4.png")} alt="김수자 개인전" animate={{ scale: hovered === "exhibition" ? 1.025 : 1 }} transition={spring} /></div>
+      </motion.article>
       <div className="philosophy">
         <h2>그룹 철학</h2>
         <div className="philosophy-photo-frame"><motion.img src={assetUrl("news-group-philosophy-v4.png")} alt="그룹 철학" whileHover={{ scale: 1.025 }} transition={spring} /></div>
@@ -398,7 +403,7 @@ function News() {
         <div className="philosophy-label label-skms">SK Managemtent System</div><div className="philosophy-label label-supex">Super Excellent Level</div>
         <div className="philosophy-type"><img src={assetUrl("skms-symbol.png")} alt="SKMS" /><i /><img src={assetUrl("supex-symbol.png")} alt="SUPEX" /></div>
       </div>
-      {[{ title: "선혜원 여름 관람\n예약 안내", image: assetUrl("news-card-summer-v3.png"), alt: "선혜원" , body: "푸른 자연과 전통 건축이 조화를 이루는 선혜원의 여름 풍경을 만나보세요. 공간에 깃든 역사와 이야기를 깊이 경험할 수 있도록 사전 예약제로 관람 프로그램을 운영합니다." }, { title: "SK 디지털 헤리티지\n아카이브 오픈", image: assetUrl("news-card-archive-v3.png"), alt: "SK 디지털 헤리티지 아카이브", body: "SK의 성장 과정과 시대별 주요 순간을 담은 디지털 헤리티지 아카이브가 새롭게 문을 열었습니다. 창업 초기의 기록부터 주요 소장품에 이르기까지 SK의 역사와 정신을 온라인에서 폭넓게 만나볼 수 있습니다." }].map((item, index) => <article key={item.title} className={`news-card card-${index}`}><h3>{item.title.split("\n").map((line) => <span key={line}>{line}</span>)}</h3><motion.img src={item.image} alt={item.alt} whileHover={{ scale: 1.025 }} transition={spring} /><p>{item.body}</p></article>)}
+      {newsCards.map((item, index) => <motion.article key={item.title} className={`news-card card-${index}`} onHoverStart={() => setHovered(item.key)} onHoverEnd={() => setHovered(null)} animate={{ backgroundColor: hovered === item.key ? "#000" : "#e3edf4", color: hovered === item.key ? "#fff" : "#000", borderColor: hovered === item.key ? "#fff" : "#000" }} transition={swift}><h3>{item.title.split("\n").map((line) => <span key={line}>{line}</span>)}</h3><div className="news-card-image"><img src={item.image} alt={item.alt} /><motion.img className="news-card-hover-image" src={item.hoverImage} alt="" animate={{ opacity: hovered === item.key ? 1 : 0, scale: hovered === item.key ? 1.02 : 1 }} transition={spring} /></div><p>{item.body}</p></motion.article>)}
       <a className="news-board-link" href="#"><span>뉴스보드</span><img src={assetUrl("large-arrow.png")} alt="" /></a>
     </section>
   );
