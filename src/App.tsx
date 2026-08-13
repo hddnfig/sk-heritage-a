@@ -23,8 +23,8 @@ function DeferredSection({ id, className, children }: { id: string; className?: 
     return () => observer.disconnect();
   }, [mounted]);
 
-  if (!mounted) return <div ref={placeholderRef} id={id} className={`deferred-section-placeholder ${className ?? ""}`} aria-hidden="true" />;
-  return <motion.div className={`deferred-section-content ${className ?? ""}`} initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduce ? 0 : 0.72, ease: [0.16, 1, 0.3, 1] }}>{children}</motion.div>;
+  if (!mounted) return <div ref={placeholderRef} id={id} className={`deferred-section-placeholder ${className ?? ""}`} data-section-snap="true" aria-hidden="true" />;
+  return <motion.div className={`deferred-section-content ${className ?? ""}`} data-section-snap="true" initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduce ? 0 : 0.72, ease: [0.16, 1, 0.3, 1] }}>{children}</motion.div>;
 }
 
 function SectionSnapController() {
@@ -35,7 +35,7 @@ function SectionSnapController() {
   useEffect(() => {
     const getTargets = () => {
       const nodes = Array.from(document.querySelectorAll<HTMLElement>(
-        ".hero, .deferred-section-placeholder, .deferred-section-content, .footer",
+        ".hero-snap-anchor, [data-section-snap='true']",
       ));
       return nodes
         .map((node) => ({ node, top: window.scrollY + node.getBoundingClientRect().top }))
@@ -188,6 +188,7 @@ function Hero() {
       };
   return (
     <section className="canvas-section hero" id="top">
+      <span className="hero-snap-anchor" aria-hidden="true" />
       <motion.div className="hero-title-symbol" aria-label="HERITAGE" {...reveal(0.08, -24, 0)}><img src={assetUrl("heritage-symbol.png")} alt="HERITAGE" /></motion.div>
       <motion.nav className="top-nav" aria-label="주요 메뉴" {...reveal(0.2, 0, -14)}>
         <a href="#">그룹역사</a><a href="#">H.Space</a><a href="#">전시/소장품</a><a href="#">뉴스보드</a>
