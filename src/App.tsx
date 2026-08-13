@@ -288,7 +288,7 @@ const timelineEras = [
     statement: ["SK의 무대는 더 넓은 세상으로", "확장 되었습니다. 끊임없는 변화와", "도전은 항상 새로운 길을 열었습니다."],
     items: [
       { slot: "a", image: assetUrl("timeline-1970-export.png"), title: "종합상사 설립, 수출 선봉에 서다", body: "인도네시아에 수출하기 위해 폴리에스터 원면을 선적하고 있습니다. 선경은 1976년 수출액 1억 1,335만 달러, 당기순이익 65만 4,000달러의 실적을 올렸습니다." },
-      { slot: "b", image: assetUrl("timeline-1970-cdma.png"), title: "세계 최초 CDMA 이동전화 상용화", body: "한국이동통신(현 SK텔레콤)은 세계 최초로 CDMA 이동전화 상용 서비스에 성공, 세계 CDMA 리더로 부상했습니다." },
+      { slot: "b", image: assetUrl("timeline-1970-cdma.png"), title: "세계 최초 CDMA\n이동전화 상용화", body: "한국이동통신(현 SK텔레콤)은 세계 최초로 CDMA 이동전화 상용 서비스에 성공, 세계 CDMA 리더로 부상했습니다." },
       { slot: "c", image: assetUrl("timeline-1970-film.png"), title: "국내 최초 폴리에스터 필름 개발", body: "선경화학(현 SKC)은 국내 최초로 폴리에스터 필름 개발에 성공했습니다." },
     ],
   },
