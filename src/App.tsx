@@ -157,7 +157,7 @@ function Hero() {
           className="hero-panel hero-panel-current"
           initial={reduce ? false : { opacity: 0, x: 84 }}
           animate={{ opacity: transitioning ? 0 : 1, x: transitioning ? direction * -44 : 0 }}
-          transition={{ duration: reduce ? 0.01 : transitioning ? 0.48 : 0.08, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: reduce || !transitioning ? 0 : 0.58, ease: [0.76, 0, 0.24, 1] }}
         >
           <div className="hero-image" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
             <motion.img className={`hero-asset-${slide.imageClass}`} src={slide.image} alt={slide.title.replace("\n", " ")} animate={{ scale: hovered && !reduce ? 1.035 : 1 }} transition={spring} />
@@ -172,7 +172,7 @@ function Hero() {
           className="hero-panel hero-panel-incoming"
           initial={{ x: direction < 0 ? -1249 : 1249 }}
           animate={{ x: transitioning ? 0 : direction < 0 ? -1249 : 1249 }}
-          transition={{ duration: reduce ? 0.01 : 1.18, delay: reduce ? 0 : transitioning ? 0.24 : 0, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: reduce || !transitioning ? 0 : 1.36, delay: reduce || !transitioning ? 0 : 0.12, ease: [0.76, 0, 0.24, 1] }}
           onAnimationComplete={finishMove}
           aria-hidden={!transitioning}
         >
