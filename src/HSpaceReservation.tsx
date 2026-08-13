@@ -201,10 +201,10 @@ export default function HSpaceReservation() {
           <img src="./assets/hs-logo-dark.png" alt="SK Heritage" />
         </a>
         <nav className="hs-nav" aria-label="주요 메뉴">
-          <a href="#/history">그룹역사</a>
-          <a className="is-active" href="#/h-space" aria-current="page">H.Space</a>
-          <a href="#/collection">전시/소장품</a>
-          <a href="#/news">뉴스보드</a>
+          <a href="#">그룹역사</a>
+          <a className="is-active" href="#" aria-current="page">H.Space</a>
+          <a href="#">전시/소장품</a>
+          <a href="#">뉴스보드</a>
         </nav>
       </header>
 
