@@ -215,12 +215,9 @@ main { width: 1920px; overflow: hidden; }
 .news-card h3 { position: relative; z-index: 2; margin: 0; font-size: 28px; line-height: 1.35; font-weight: 600; }
 .news-card h3 span { display: block; }
 .news-card-image, .news-card-image > img { position: absolute; max-width: none; transform-origin: center; }
-.news-card.card-0 .news-card-image { left: 52px; top: 58px; width: 796px; height: 448px; }
-.news-card.card-1 .news-card-image { left: 133px; top: 83px; width: 606px; height: 404px; }
-.news-card-image > img:first-child { inset: 0; width: 100%; height: 100%; object-fit: contain; }
-.news-card-hover-image { opacity: 0; }
-.news-card.card-0 .news-card-hover-image { left: 14px; top: 59px; width: 424px; height: 299px; }
-.news-card.card-1 .news-card-hover-image { left: 3px; top: 4px; width: 600px; height: 400px; object-fit: cover; object-position: left center; }
+.news-card.card-0 .news-card-image { left: 62px; top: 45px; width: 659px; height: 370px; }
+.news-card.card-1 .news-card-image { left: 136px; top: 87px; width: 600px; height: 400px; }
+.news-card-image > img { inset: 0; width: 100%; height: 100%; object-fit: fill; }
 .news-card p { position: absolute; z-index: 2; left: 20px; right: 20px; bottom: 20px; margin: 0; font-size: 20px; line-height: 1.35; }
 .news-board-link { position: absolute; left: 1596px; top: 540px; width: 324px; height: 540px; padding: 0 20px; border-bottom: 1px solid #000; display: flex; align-items: center; justify-content: space-between; font-size: 20px; line-height: 1.35; transition: background-color .55s cubic-bezier(.16,1,.3,1), color .35s ease, border-color .35s ease; }
 .news-board-link img { width: 188px; height: 44px; object-fit: contain; transition: transform .65s cubic-bezier(.16,1,.3,1); }

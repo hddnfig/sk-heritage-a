@@ -531,8 +531,8 @@ function Collection() {
 function News() {
   const [hovered, setHovered] = useState<string | null>(null);
   const newsCards = [
-    { key: "summer", title: "선혜원 여름 관람\n예약 안내", image: assetUrl("news-card-summer-v5.png"), hoverImage: assetUrl("news-card-summer-hover-v4.png"), alt: "선혜원", body: "푸른 자연과 전통 건축이 조화를 이루는 선혜원의 여름 풍경을 만나보세요. 공간에 깃든 역사와 이야기를 깊이 경험할 수 있도록 사전 예약제로 관람 프로그램을 운영합니다." },
-    { key: "archive", title: "SK 디지털 헤리티지\n아카이브 오픈", image: assetUrl("news-card-archive-v3.png"), hoverImage: assetUrl("news-card-archive-hover-v4.png"), alt: "SK 디지털 헤리티지 아카이브", body: "SK의 성장 과정과 시대별 주요 순간을 담은 디지털 헤리티지 아카이브가 새롭게 문을 열었습니다. 창업 초기의 기록부터 주요 소장품에 이르기까지 SK의 역사와 정신을 온라인에서 폭넓게 만나볼 수 있습니다." },
+    { key: "summer", title: "선혜원 여름 관람\n예약 안내", image: assetUrl("news-card-summer-v5.png"), alt: "선혜원", body: "푸른 자연과 전통 건축이 조화를 이루는 선혜원의 여름 풍경을 만나보세요. 공간에 깃든 역사와 이야기를 깊이 경험할 수 있도록 사전 예약제로 관람 프로그램을 운영합니다." },
+    { key: "archive", title: "SK 디지털 헤리티지\n아카이브 오픈", image: assetUrl("news-card-archive-v3.png"), alt: "SK 디지털 헤리티지 아카이브", body: "SK의 성장 과정과 시대별 주요 순간을 담은 디지털 헤리티지 아카이브가 새롭게 문을 열었습니다. 창업 초기의 기록부터 주요 소장품에 이르기까지 SK의 역사와 정신을 온라인에서 폭넓게 만나볼 수 있습니다." },
   ];
   return (
     <section className="canvas-section news" id="news">
@@ -548,7 +548,7 @@ function News() {
         <div className="philosophy-label label-skms">SK Managemtent System</div><div className="philosophy-label label-supex">Super Excellent Level</div>
         <div className="philosophy-type"><img src={assetUrl("skms-symbol.png")} alt="SKMS" /><i /><img src={assetUrl("supex-symbol.png")} alt="SUPEX" /></div>
       </div>
-      {newsCards.map((item, index) => <motion.article key={item.title} className={`news-card card-${index}`} onHoverStart={() => setHovered(item.key)} onHoverEnd={() => setHovered(null)} animate={{ backgroundColor: hovered === item.key ? "#000" : "#e3edf4", color: hovered === item.key ? "#fff" : "#000", borderColor: item.key === "archive" ? "#000" : hovered === item.key ? "#fff" : "#000" }} transition={swift}><h3>{item.title.split("\n").map((line) => <span key={line}>{line}</span>)}</h3><div className="news-card-image"><img src={item.image} alt={item.alt} /><motion.img className="news-card-hover-image" src={item.hoverImage} alt="" animate={{ opacity: hovered === item.key ? 1 : 0, scale: hovered === item.key ? 1.02 : 1 }} transition={spring} /></div><p>{item.body}</p></motion.article>)}
+      {newsCards.map((item, index) => <motion.article key={item.title} className={`news-card card-${index}`} onHoverStart={() => setHovered(item.key)} onHoverEnd={() => setHovered(null)} animate={{ backgroundColor: hovered === item.key ? "#000" : "#e3edf4", color: hovered === item.key ? "#fff" : "#000", borderColor: item.key === "archive" ? "#000" : hovered === item.key ? "#fff" : "#000" }} transition={swift}><h3>{item.title.split("\n").map((line) => <span key={line}>{line}</span>)}</h3><div className="news-card-image"><img src={item.image} alt={item.alt} /></div><p>{item.body}</p></motion.article>)}
       <a className="news-board-link" href="#"><span>뉴스보드</span><img src={assetUrl("large-arrow.png")} alt="" /></a>
     </section>
   );
