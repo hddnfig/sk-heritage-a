@@ -85,35 +85,73 @@ function Pager({ index, previous, next, total = 3 }: { index: number; previous: 
 }
 
 function Hero() {
+  const reduce = useReducedMotion();
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [hovered, setHovered] = useState(false);
   const slide = heroSlides[index];
   const move = useCallback((step: number) => { setDirection(step); setIndex((current) => (current + step + 3) % 3); }, []);
+  const reveal = (delay: number, x = 0, y = 18) => reduce
+    ? { initial: false as const }
+    : {
+        initial: { opacity: 0, x, y },
+        animate: { opacity: 1, x: 0, y: 0 },
+        transition: { duration: 0.82, delay, ease: [0.16, 1, 0.3, 1] as const },
+      };
   return (
     <section className="canvas-section hero" id="top">
-      <div className="hero-title-symbol" aria-label="HERITAGE"><img src={assetUrl("heritage-symbol.png")} alt="HERITAGE" /></div>
-      <nav className="top-nav" aria-label="주요 메뉴">
+      <motion.div className="hero-title-symbol" aria-label="HERITAGE" {...reveal(0.08, -24, 0)}><img src={assetUrl("heritage-symbol.png")} alt="HERITAGE" /></motion.div>
+      <motion.nav className="top-nav" aria-label="주요 메뉴" {...reveal(0.2, 0, -14)}>
         <a href="#">그룹역사</a><a href="#">H.Space</a><a href="#">전시/소장품</a><a href="#">뉴스보드</a>
-      </nav>
-      <div className="hero-sk-symbol"><img src={assetUrl("sk-symbol.png")} alt="SK" /></div>
-      <p className="hero-intro">시간이 흘러도 변하지 않는 가치가 있습니다. 한 사람의 신념에서 시작된 길은 세대를 지나 이어지고,<br />수많은 도전과 선택의 순간들이 모여 오늘의 SK를 만들었습니다. 그 시간 속에 쌓인 이야기와 가치를<br />SK Heritage에서 만나보세요.</p>
-      <div className="hero-rule" />
-      <div className="hero-control-row"><Pager index={index} previous={() => move(-1)} next={() => move(1)} /><span>{slide.label}</span></div>
-      <motion.div className="hero-image" onHoverStart={() => setHovered(true)} onHoverEnd={() => setHovered(false)} animate={{ width: hovered ? 760 : 722 }} transition={spring}>
+      </motion.nav>
+      <motion.div className="hero-sk-symbol" {...reveal(0.32, 24, 0)}><img src={assetUrl("sk-symbol.png")} alt="SK" /></motion.div>
+      <motion.p className="hero-intro" {...reveal(0.44)}>시간이 흘러도 변하지 않는 가치가 있습니다. 한 사람의 신념에서 시작된 길은 세대를 지나 이어지고,<br />수많은 도전과 선택의 순간들이 모여 오늘의 SK를 만들었습니다. 그 시간 속에 쌓인 이야기와 가치를<br />SK Heritage에서 만나보세요.</motion.p>
+      <motion.div
+        className="hero-rule"
+        initial={reduce ? false : { opacity: 0, scaleX: 0 }}
+        animate={{ opacity: 1, scaleX: 1 }}
+        transition={{ duration: reduce ? 0 : 0.9, delay: reduce ? 0 : 0.56, ease: [0.16, 1, 0.3, 1] }}
+        style={{ transformOrigin: "left center" }}
+      />
+      <motion.div className="hero-control-row" {...reveal(0.68, -18, 0)}><Pager index={index} previous={() => move(-1)} next={() => move(1)} /><span>{slide.label}</span></motion.div>
+      <motion.div
+        className="hero-image"
+        onHoverStart={() => setHovered(true)}
+        onHoverEnd={() => setHovered(false)}
+        initial={reduce ? false : { opacity: 0, x: 84, clipPath: "inset(0 100% 0 0)" }}
+        animate={{ opacity: 1, x: 0, clipPath: "inset(0 0% 0 0)", width: hovered ? 760 : 722 }}
+        transition={{
+          width: spring,
+          opacity: { duration: reduce ? 0 : 0.78, delay: reduce ? 0 : 0.8 },
+          x: { duration: reduce ? 0 : 0.92, delay: reduce ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] },
+          clipPath: { duration: reduce ? 0 : 1.05, delay: reduce ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] },
+        }}
+      >
         <AnimatePresence initial={false} custom={direction} mode="popLayout">
           <motion.img className={`hero-asset-${slide.imageClass}`} key={slide.image} src={slide.image} alt={slide.title.replace("\n", " ")} custom={direction} variants={{ enter: (d: number) => ({ x: d * 180, opacity: 0 }), show: { x: 0, opacity: 1 }, exit: (d: number) => ({ x: d * -80, opacity: 0 }) }} initial="enter" animate="show" exit="exit" transition={spring} />
         </AnimatePresence>
       </motion.div>
-      <div className="hero-copy">
+      <motion.div className="hero-copy" {...reveal(0.94, 36, 0)}>
         <AnimatePresence initial={false} custom={direction} mode="wait">
           <motion.div key={slide.title} className="hero-copy-motion" custom={direction} variants={{ enter: (d: number) => ({ x: d * 90, opacity: 0 }), show: { x: 0, opacity: 1 }, exit: (d: number) => ({ x: d * -45, opacity: 0 }) }} initial="enter" animate="show" exit="exit" transition={swift}>
             <h2>{slide.title.split("\n").map((line) => <span key={line}>{line}</span>)}</h2>
             <div><p>{slide.body}</p><a className="figma-cta" href="#collection"><img src={assetUrl("cta-arrow.png")} alt="" /><strong>방문예약하러가기</strong></a></div>
           </motion.div>
         </AnimatePresence>
-      </div>
-      <motion.button className="hero-peek" type="button" onClick={() => move(1)} aria-label="다음 콘텐츠 보기" whileHover={{ x: -10 }} transition={spring}><AnimatePresence initial={false} mode="popLayout"><motion.img className={`hero-asset-${slide.peekClass}`} key={slide.peek} src={slide.peek} alt="다음 장면" initial={{ x: 80, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -80, opacity: 0 }} transition={spring} /></AnimatePresence></motion.button>
+      </motion.div>
+      <motion.button
+        className="hero-peek"
+        type="button"
+        onClick={() => move(1)}
+        aria-label="다음 콘텐츠 보기"
+        initial={reduce ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        whileHover={{ x: -10 }}
+        transition={{
+          opacity: { duration: reduce ? 0 : 0.9, delay: reduce ? 0 : 1.08, ease: [0.16, 1, 0.3, 1] },
+          x: spring,
+        }}
+      ><AnimatePresence initial={false} mode="popLayout"><motion.img className={`hero-asset-${slide.peekClass}`} key={slide.peek} src={slide.peek} alt="다음 장면" initial={{ x: 80, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -80, opacity: 0 }} transition={spring} /></AnimatePresence></motion.button>
     </section>
   );
 }
