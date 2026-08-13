@@ -104,8 +104,7 @@ main { width: 1920px; overflow: hidden; }
 .history-primary > img { width: 1596px; height: 1002px; max-width: none; margin-left: -300px; object-fit: cover; }
 .history-alt .history-primary > img { width: 1378px; height: 1002px; margin-left: -156px; }
 .history-copy { display: flex; align-items: center; padding: 20px; }
-.history-copy > div { width: 555px; }
-.history-alt .history-copy > div { width: 400px; }
+.history-copy > div { width: 400px; }
 .history-copy h2 { margin: 16px 0 8px; font-size: 24px; line-height: 1.35; font-weight: 600; }
 .history-copy p { margin: 0; font-size: 20px; line-height: 1.35; }
 .history-copy h2, .history-body { transform-origin: left top; will-change: clip-path, transform, opacity; }
