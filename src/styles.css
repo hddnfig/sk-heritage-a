@@ -215,7 +215,7 @@ main { width: 1920px; overflow: hidden; }
 .philosophy-label.label-supex { right: 20px; width: 343px; }
 .philosophy-type { position: absolute; left: 20px; top: 400px; width: 1370px; height: 100px; display: grid; grid-template-columns: 288px 1fr 343px; gap: 40px; align-items: center; }
 .philosophy-type img { width: 100%; height: auto; display: block; }
-.philosophy-type i { height: 12px; background: var(--accent); }
+.philosophy-type i { height: 12px; background: var(--accent); transform-origin: left center; will-change: transform; }
 .news-card { position: absolute; top: 540px; height: 540px; padding: 20px; border-right: 1px solid #000; overflow: hidden; }
 .news-card.card-0 { left: 510px; width: 490px; }
 .news-card.card-1 { left: 1000px; width: 596px; }
