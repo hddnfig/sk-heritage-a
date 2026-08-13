@@ -139,7 +139,16 @@ function Hero() {
   return (
     <section className="canvas-section hero" id="top">
       <span className="hero-snap-anchor" data-snap-id="hero-space" aria-hidden="true" />
-      <motion.div className="hero-title-symbol" aria-label="HERITAGE" {...reveal(0.08, -24, 0)}><img src={assetUrl("heritage-symbol.png")} alt="HERITAGE" /></motion.div>
+      <motion.a
+        className="hero-title-symbol"
+        href="#/"
+        aria-label="SK Heritage 홈"
+        onClick={(event) => {
+          event.preventDefault();
+          window.location.reload();
+        }}
+        {...reveal(0.08, -24, 0)}
+      ><img src={assetUrl("heritage-symbol.png")} alt="HERITAGE" /></motion.a>
       <motion.nav className="top-nav" aria-label="주요 메뉴" {...reveal(0.2, 0, -14)}>
         <a href="#">그룹역사</a><a href="#/h-space">H.Space</a><a href="#">전시/소장품</a><a href="#">뉴스보드</a>
       </motion.nav>
