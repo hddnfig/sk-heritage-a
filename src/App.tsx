@@ -182,7 +182,7 @@ function Hero() {
               initial={reduce || index !== 0 ? false : { clipPath: "inset(0 0 100% 0)", y: 28, opacity: 0 }}
               animate={{ clipPath: "inset(0 0 0% 0)", y: 0, opacity: 1 }}
               transition={{ duration: reduce ? 0 : 0.92, delay: reduce ? 0 : 1.5, ease: [0.16, 1, 0.3, 1] }}
-            ><p>{slide.body}</p><a className="figma-cta" href="#/h-space"><img src={assetUrl("cta-arrow.png")} alt="" /><strong>방문예약하러가기</strong></a></motion.div>
+            ><p>{slide.body}</p><a className="figma-cta" href="#/h-space"><img src={assetUrl("cta-arrow.png")} alt="" /><strong>방문 예약하기</strong></a></motion.div>
           </div></div>
         </motion.div>
         <motion.div
@@ -205,7 +205,7 @@ function Hero() {
               initial={false}
               animate={transitioning ? { clipPath: "inset(0 0 0% 0)", y: 0, opacity: 1 } : { clipPath: "inset(0 0 100% 0)", y: 28, opacity: 0 }}
               transition={{ duration: reduce ? 0 : 0.58, delay: reduce || !transitioning ? 0 : 1.28, ease: [0.16, 1, 0.3, 1] }}
-            ><p>{incomingSlide.body}</p><a className="figma-cta" href="#/h-space" tabIndex={transitioning ? 0 : -1}><img src={assetUrl("cta-arrow.png")} alt="" /><strong>방문예약하러가기</strong></a></motion.div>
+            ><p>{incomingSlide.body}</p><a className="figma-cta" href="#/h-space" tabIndex={transitioning ? 0 : -1}><img src={assetUrl("cta-arrow.png")} alt="" /><strong>방문 예약하기</strong></a></motion.div>
           </div></div>
         </motion.div>
       </div>
