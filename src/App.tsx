@@ -198,9 +198,19 @@ function Hero() {
         <motion.div
           key={`incoming-${incomingIndex}-${direction}`}
           className="hero-panel hero-panel-incoming"
-          initial={{ x: direction < 0 ? -1249 : 1249 }}
-          animate={{ x: transitioning ? 0 : direction < 0 ? -1249 : 1249 }}
-          transition={{ duration: reduce || !transitioning ? 0 : 1.8, delay: reduce || !transitioning ? 0 : 0.12, ease: [0.76, 0, 0.24, 1] }}
+          initial={reduce ? false : { x: direction < 0 ? -1249 : 1249, opacity: 0 }}
+          animate={{ x: transitioning ? 0 : direction < 0 ? -1249 : 1249, opacity: 1 }}
+          transition={reduce
+            ? { duration: 0 }
+            : transitioning
+              ? {
+                  x: { duration: 1.8, delay: 0.12, ease: [0.76, 0, 0.24, 1] },
+                  opacity: { duration: 0.58, delay: 0.12, ease: [0.16, 1, 0.3, 1] },
+                }
+              : {
+                  x: { duration: 0 },
+                  opacity: { duration: 0.82, delay: initialPanelReveal.current ? 2.72 : 0.48, ease: [0.16, 1, 0.3, 1] },
+                }}
           onAnimationComplete={finishMove}
           aria-hidden={!transitioning}
         >
@@ -226,9 +236,9 @@ function Hero() {
         onHoverStart={() => setPeekHovered(true)}
         onHoverEnd={() => setPeekHovered(false)}
         aria-label="다음 콘텐츠 보기"
-        initial={reduce ? false : { opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ opacity: { duration: reduce ? 0 : 0.9, delay: reduce ? 0 : 1.08, ease: [0.16, 1, 0.3, 1] } }}
+        initial={reduce ? false : { opacity: 0, x: 22 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ opacity: { duration: reduce ? 0 : 0.82, delay: reduce ? 0 : 2.72, ease: [0.16, 1, 0.3, 1] }, x: { duration: reduce ? 0 : 0.82, delay: reduce ? 0 : 2.72, ease: [0.16, 1, 0.3, 1] } }}
       >
         <motion.span className="hero-peek-dim" animate={{ opacity: peekHovered ? 1 : 0 }} transition={{ duration: reduce ? 0 : 0.55, ease: [0.16, 1, 0.3, 1] }} />
         <motion.img className="hero-peek-arrow" src={assetUrl("large-arrow.png")} alt="" animate={{ opacity: peekHovered ? 1 : 0, x: peekHovered ? 0 : -24 }} transition={{ duration: reduce ? 0 : 0.72, ease: [0.16, 1, 0.3, 1] }} />
@@ -301,7 +311,17 @@ function History() {
             </motion.div> : null}
           </AnimatePresence>
         </div>
-        <motion.button className="history-next" type="button" onClick={() => move(1)} aria-label={`${slide.nextPerson} 보기`} onHoverStart={() => setNextHovered(true)} onHoverEnd={() => setNextHovered(false)} animate={{ backgroundColor: nextHovered ? "rgba(240, 83, 39, 0.09)" : "rgba(255, 255, 255, 0)" }} transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}>
+        <motion.button
+          className="history-next"
+          type="button"
+          onClick={() => move(1)}
+          aria-label={`${slide.nextPerson} 보기`}
+          onHoverStart={() => setNextHovered(true)}
+          onHoverEnd={() => setNextHovered(false)}
+          initial={reduce ? false : { opacity: 0, x: 28 }}
+          animate={{ opacity: 1, x: 0, backgroundColor: nextHovered ? "rgba(240, 83, 39, 0.09)" : "rgba(255, 255, 255, 0)" }}
+          transition={{ opacity: { duration: reduce ? 0 : 0.9, delay: reduce ? 0 : 4.08, ease: [0.16, 1, 0.3, 1] }, x: { duration: reduce ? 0 : 0.9, delay: reduce ? 0 : 4.08, ease: [0.16, 1, 0.3, 1] }, backgroundColor: { duration: reduce ? 0 : 0.45, ease: [0.16, 1, 0.3, 1] } }}
+        >
           <div><span>{slide.nextPerson}</span><motion.img className="large-arrow-static" src={assetUrl("large-arrow.png")} alt="" animate={nextHovered ? { x: [0, 18, 5, 18, 0], opacity: [1, .68, 1, .78, 1] } : { x: 0, opacity: 1 }} transition={nextHovered ? { duration: 3.2, ease: "easeInOut", repeat: Infinity, repeatDelay: 0.45 } : spring} /></div>
           <div className="history-next-image"><AnimatePresence initial={false} mode="popLayout"><motion.img key={slide.nextImage} src={slide.nextImage} alt={slide.nextPerson} initial={{ x: -90, opacity: 0 }} animate={{ x: 0, opacity: 1, scale: nextHovered ? 1.065 : 1 }} exit={{ x: 90, opacity: 0 }} transition={spring} /></AnimatePresence></div>
         </motion.button>
