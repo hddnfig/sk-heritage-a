@@ -192,11 +192,7 @@ function Hero() {
         aria-label="다음 콘텐츠 보기"
         initial={reduce ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
-        whileHover={transitioning ? undefined : { x: -10 }}
-        transition={{
-          opacity: { duration: reduce ? 0 : 0.9, delay: reduce ? 0 : 1.08, ease: [0.16, 1, 0.3, 1] },
-          x: spring,
-        }}
+        transition={{ opacity: { duration: reduce ? 0 : 0.9, delay: reduce ? 0 : 1.08, ease: [0.16, 1, 0.3, 1] } }}
       >
         <motion.span className="hero-peek-dim" animate={{ opacity: peekHovered ? 1 : 0 }} transition={{ duration: reduce ? 0 : 0.55, ease: [0.16, 1, 0.3, 1] }} />
         <motion.img className="hero-peek-arrow" src={assetUrl("large-arrow.png")} alt="" animate={{ opacity: peekHovered ? 1 : 0, x: peekHovered ? 0 : -24 }} transition={{ duration: reduce ? 0 : 0.72, ease: [0.16, 1, 0.3, 1] }} />
