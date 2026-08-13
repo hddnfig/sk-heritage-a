@@ -657,15 +657,6 @@ function News() {
             className="philosophy-photo-default"
             src={assetUrl("news-group-philosophy-v4.png")}
             alt="그룹 철학"
-            animate={{ opacity: hovered === "philosophy" ? 0 : 1 }}
-            transition={{ duration: reduce ? 0 : .5, ease: [0.16, 1, 0.3, 1] }}
-          />
-          <motion.img
-            className="philosophy-photo-hover"
-            src={assetUrl("news-group-philosophy-v3.png")}
-            alt=""
-            animate={{ opacity: hovered === "philosophy" ? 1 : 0 }}
-            transition={{ duration: reduce ? 0 : .7, ease: [0.16, 1, 0.3, 1] }}
           />
         </motion.div>
         <motion.p
