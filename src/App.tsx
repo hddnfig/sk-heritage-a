@@ -119,16 +119,24 @@ function Hero() {
         onHoverStart={() => setHovered(true)}
         onHoverEnd={() => setHovered(false)}
         initial={reduce ? false : { opacity: 0, x: 84, clipPath: "inset(0 100% 0 0)" }}
-        animate={{ opacity: 1, x: 0, clipPath: "inset(0 0% 0 0)", width: hovered ? 760 : 722 }}
+        animate={{ opacity: 1, x: 0, clipPath: "inset(0 0% 0 0)" }}
         transition={{
-          width: spring,
           opacity: { duration: reduce ? 0 : 0.78, delay: reduce ? 0 : 0.8 },
           x: { duration: reduce ? 0 : 0.92, delay: reduce ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] },
           clipPath: { duration: reduce ? 0 : 1.05, delay: reduce ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] },
         }}
       >
         <AnimatePresence initial={false} custom={direction} mode="popLayout">
-          <motion.img className={`hero-asset-${slide.imageClass}`} key={slide.image} src={slide.image} alt={slide.title.replace("\n", " ")} custom={direction} variants={{ enter: (d: number) => ({ x: d * 180, opacity: 0 }), show: { x: 0, opacity: 1 }, exit: (d: number) => ({ x: d * -80, opacity: 0 }) }} initial="enter" animate="show" exit="exit" transition={spring} />
+          <motion.img
+            className={`hero-asset-${slide.imageClass}`}
+            key={slide.image}
+            src={slide.image}
+            alt={slide.title.replace("\n", " ")}
+            initial={{ x: direction * 180, opacity: 0, scale: 1 }}
+            animate={{ x: 0, opacity: 1, scale: hovered && !reduce ? 1.035 : 1 }}
+            exit={{ x: direction * -80, opacity: 0, scale: 1 }}
+            transition={spring}
+          />
         </AnimatePresence>
       </motion.div>
       <motion.div className="hero-copy" {...reveal(0.94, 36, 0)}>
