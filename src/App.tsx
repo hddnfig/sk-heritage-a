@@ -165,6 +165,7 @@ const timelineEras = [
 ];
 
 function Timeline() {
+  const reduce = useReducedMotion();
   const [active, setActive] = useState<number | null>(null);
   const [era, setEra] = useState(0);
   const [direction, setDirection] = useState(1);
@@ -193,6 +194,8 @@ function Timeline() {
     if (!section) return;
     const handleWheel = (event: WheelEvent) => {
       if (Math.abs(event.deltaY) < 20 || wheelLock.current) return;
+      const sectionTop = section.getBoundingClientRect().top;
+      if (Math.abs(sectionTop) > 4) return;
       const step = event.deltaY > 0 ? 1 : -1;
       const next = Math.max(0, Math.min(timelineEras.length - 1, era + step));
       if (next === era) return;
@@ -200,30 +203,37 @@ function Timeline() {
       wheelLock.current = true;
       setDirection(step);
       setEra(next);
-      window.setTimeout(() => { wheelLock.current = false; }, 900);
+      window.setTimeout(() => { wheelLock.current = false; }, reduce ? 80 : 2100);
     };
     section.addEventListener("wheel", handleWheel, { passive: false });
     return () => section.removeEventListener("wheel", handleWheel);
-  }, [era]);
+  }, [era, reduce]);
 
   const currentEra = timelineEras[era];
   return (
     <section ref={sectionRef} className="canvas-section timeline" id="space">
-      <AnimatePresence initial={false} custom={direction} mode="popLayout">
-        <motion.div
-          className={`timeline-era era-${currentEra.year}`}
-          key={currentEra.year}
-          custom={direction}
-          variants={{ enter: (d: number) => ({ x: d * 1920 }), show: { x: 0 }, exit: (d: number) => ({ x: d * -1920 }) }}
-          initial="enter"
-          animate="show"
-          exit="exit"
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <h2 className="timeline-statement">{currentEra.statement.map((line) => <span key={line}>{line}</span>)}</h2>
-          {currentEra.items.map((item, index) => <motion.article key={`${currentEra.year}-${item.slot}`} className={`timeline-record slot-${item.slot}`} onHoverStart={() => setActive(index)} onHoverEnd={() => setActive(null)}><motion.img src={item.image} alt={item.title} animate={{ scale: active === index ? 1.035 : 1 }} transition={spring} /><div><h3>{item.title}</h3><p>{item.body}</p></div></motion.article>)}
-        </motion.div>
+      <AnimatePresence initial={false} custom={direction} mode="sync">
+        <motion.h2 key={currentEra.year} className="timeline-statement" custom={direction} variants={{ enter: (d: number) => ({ x: d * 220, opacity: 0 }), show: { x: 0, opacity: 1 }, exit: (d: number) => ({ x: d * -160, opacity: 0 }) }} initial="enter" animate="show" exit="exit" transition={{ duration: reduce ? 0.01 : 1.35, ease: [0.16, 1, 0.3, 1] }}>{currentEra.statement.map((line) => <span key={line}>{line}</span>)}</motion.h2>
       </AnimatePresence>
+      {currentEra.items.map((item, index) => (
+        <AnimatePresence initial={false} custom={{ direction, index }} mode="sync" key={item.slot}>
+          <motion.article
+            key={`${currentEra.year}-${item.slot}`}
+            className={`timeline-record era-${currentEra.year} slot-${item.slot}`}
+            custom={{ direction, index }}
+            variants={{
+              enter: ({ direction: d, index: i }: { direction: number; index: number }) => ({ x: d * (1920 + i * 180), opacity: 0 }),
+              show: ({ index: i }: { index: number }) => ({ x: 0, opacity: 1, transition: { duration: reduce ? 0.01 : 1.55, delay: reduce ? 0 : i * 0.18, ease: [0.16, 1, 0.3, 1] } }),
+              exit: ({ direction: d, index: i }: { direction: number; index: number }) => ({ x: d * -(1520 + i * 140), opacity: 0, transition: { duration: reduce ? 0.01 : 1.3, delay: reduce ? 0 : i * 0.1, ease: [0.4, 0, 0.2, 1] } }),
+            }}
+            initial="enter"
+            animate="show"
+            exit="exit"
+            onHoverStart={() => setActive(index)}
+            onHoverEnd={() => setActive(null)}
+          ><motion.img src={item.image} alt={item.title} animate={{ scale: active === index ? 1.035 : 1 }} transition={spring} /><div><h3>{item.title}</h3><p>{item.body}</p></div></motion.article>
+        </AnimatePresence>
+      ))}
       <div className="timeline-year"><AnimatePresence initial={false} mode="wait"><motion.span key={currentEra.year} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={swift}>{currentEra.year}</motion.span></AnimatePresence></div>
       <div className="year-navigation" aria-label="연도 선택">
         <div className="year-bars" aria-hidden="true">{Array.from({ length: 12 }).map((_, i) => <i key={i} className={i === currentEra.activeTick ? "active" : ""} />)}</div>
