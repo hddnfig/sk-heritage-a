@@ -179,7 +179,7 @@ main { width: 1920px; overflow: hidden; }
 .asset-arrow-large img { width: 148px; height: 44px; }
 .asset-arrow-small { width: 68px; height: 24px; }
 .asset-arrow-small img { width: 68px; height: 24px; }
-.collection-object-stage { position: absolute; left: 49px; top: 226px; width: 224px; height: 854px; overflow: hidden; }
+.collection-object-stage { position: absolute; left: 49px; top: 147px; width: 224px; height: 933px; overflow: hidden; }
 .collection-object-track { display: flex; width: 224px; flex-direction: column; align-items: center; gap: 132px; animation: collection-object-roll 52s linear infinite; will-change: transform; }
 .collection-object-track:hover { animation-play-state: paused; }
 .side-object { position: relative; display: block; flex: 0 0 auto; overflow: hidden; }
