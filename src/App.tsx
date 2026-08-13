@@ -15,10 +15,10 @@ function DeferredSection({ id, className, children }: { id: string; className?: 
     const placeholder = placeholderRef.current;
     if (!placeholder || mounted) return;
     const observer = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return;
+      if (entry.intersectionRatio < 0.5) return;
       setMounted(true);
       observer.disconnect();
-    }, { rootMargin: "0px", threshold: 0.18 });
+    }, { rootMargin: "0px", threshold: 0.5 });
     observer.observe(placeholder);
     return () => observer.disconnect();
   }, [mounted]);
