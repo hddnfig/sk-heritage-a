@@ -152,12 +152,12 @@ main { width: 1920px; overflow: hidden; }
 
 .news { background: var(--ice); }
 .exhibition { position: absolute; left: 0; top: 0; width: 510px; height: 1080px; border-right: 1px solid #000; overflow: hidden; }
-.exhibition > div { position: absolute; left: 20px; top: 20px; width: 456px; }
+.exhibition > .exhibition-copy { position: absolute; left: 20px; top: 20px; width: 456px; }
 .exhibition h2, .exhibition p { margin: 0; font-size: 20px; line-height: 1.35; }
 .exhibition h2 { font-weight: 600; margin-bottom: 16px; }
 .exhibition > a { position: absolute; left: 20px; top: 496px; display: flex; align-items: center; gap: 10px; color: var(--accent); font-size: 18px; line-height: 1; z-index: 2; }
 .exhibition > a img { width: 68px; height: 24px; }
-.exhibition-image { position: absolute; left: 20px; bottom: 20px; width: 470px; height: 520px; overflow: hidden; }
+.exhibition > .exhibition-image { position: absolute; left: 20px; top: 540px; width: 470px; height: 520px; overflow: hidden; }
 .exhibition-image img { position: absolute; left: 0; bottom: 0; width: 470px; height: 706px; object-fit: cover; object-position: bottom; transform-origin: center; }
 .philosophy { position: absolute; left: 510px; top: 0; width: 1410px; height: 540px; border-bottom: 1px solid #000; overflow: hidden; }
 .philosophy > h2 { position: absolute; left: 20px; top: 20px; width: 449px; margin: 0; font-size: 28px; line-height: 1.35; font-weight: 600; }
