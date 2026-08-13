@@ -248,9 +248,9 @@ function Timeline() {
 }
 
 const sideObjects = [
-  { className: "rooster", image: "/assets/object-rooster-v3.png", label: "황금 장식품" },
-  { className: "glasses", image: "/assets/object-glasses-v3.png", label: "안경과 소장품" },
-  { className: "clock", image: "/assets/object-clock-v3.png", label: "탁상시계" },
+  { className: "rooster", image: "/assets/object-rooster-v3.png", colorImage: "/assets/object-rooster-color-v3.png", label: "황금 장식품" },
+  { className: "glasses", image: "/assets/object-glasses-v3.png", colorImage: "/assets/object-glasses-color-v3.png", label: "안경과 소장품" },
+  { className: "clock", image: "/assets/object-clock-v3.png", colorImage: "/assets/object-clock-color-v3.png", label: "탁상시계" },
 ];
 
 function Collection() {
@@ -258,22 +258,19 @@ function Collection() {
   const [hovered, setHovered] = useState<string | null>(null);
   return (
     <section className="canvas-section collection" id="collection">
-      <motion.button className="collection-left top" type="button" onHoverStart={() => setHovered("loom")} onHoverEnd={() => setHovered(null)}><span>SK의 시작을 짜 올린 기계</span><motion.img src="/assets/loom-v2.png" alt="직기" animate={{ scale: hovered === "loom" ? 1.05 : 1 }} transition={spring} /></motion.button>
-      <motion.button className="collection-left bottom" type="button" onHoverStart={() => setHovered("car")} onHoverEnd={() => setHovered(null)}><span>창업회장 사용 차량</span><motion.img src="/assets/car-v2.png" alt="창업회장 사용 차량" animate={{ scale: hovered === "car" ? 1.05 : 1 }} transition={spring} /></motion.button>
+      <motion.button className="collection-left top" type="button" onHoverStart={() => setHovered("loom")} onHoverEnd={() => setHovered(null)}><span>SK의 시작을 짜 올린 기계</span><div className="collection-left-image"><img src="/assets/loom-v2.png" alt="직기" /><motion.img className="color-layer" src="/assets/loom-color-v3.png" alt="" animate={{ opacity: hovered === "loom" ? 1 : 0, scale: hovered === "loom" ? 1.035 : 1 }} transition={spring} /></div></motion.button>
+      <motion.button className="collection-left bottom" type="button" onHoverStart={() => setHovered("car")} onHoverEnd={() => setHovered(null)}><span>창업회장 사용 차량</span><div className="collection-left-image"><img src="/assets/car-v2.png" alt="창업회장 사용 차량" /><motion.img className="color-layer" src="/assets/car-color-v3.png" alt="" animate={{ opacity: hovered === "car" ? 1 : 0, scale: hovered === "car" ? 1.035 : 1 }} transition={spring} /></div></motion.button>
       <div className="collection-center">
         <div className="collection-site-frame">
-          <div className="collection-site-pan"><motion.img src="/assets/collection-site-v3.png" alt="SK 기념관" animate={reduce ? undefined : { scale: [1, 1.065, 1], x: [0, -18, 0], y: [0, -8, 0] }} transition={reduce ? undefined : { duration: 22, ease: "easeInOut", repeat: Infinity }} /></div>
-          <strong className="collection-site-label">SK Heritage Site</strong>
-          <div className="collection-site-content">
-            <div className="collection-site-copy">
-              <h2>시간이 머무는 집,<br />SK 기념관</h2>
-              <div><p className="collection-site-place"><b>서울 종로구 삼청동</b><span>Tradition, Architecture &amp; Art</span></p><p>1968년, SK 창업주의 사저로 시작된 선혜원은<br />전통 한옥과 현대 건축, 예술이 어우러지는<br />새로운 문화 공간으로 이어지고 있습니다.</p></div>
-            </div>
-            <motion.a href="#top" whileHover={{ backgroundColor: "#f05327" }} transition={swift}>선혜원 바로가기</motion.a>
+          <div className="collection-site-pan"><motion.img src="/assets/collection-memorial-hd.png" alt="SK 기념관" animate={reduce ? undefined : { scale: [1, 1.065, 1], x: [0, -18, 0], y: [0, -8, 0] }} transition={reduce ? undefined : { duration: 22, ease: "easeInOut", repeat: Infinity }} /></div>
+          <div className="collection-site-gradient" />
+          <div className="collection-site-copy">
+            <h2>두 거목을 기리는 공간,<br />SK 기념관</h2>
+            <div><p className="collection-site-place"><b>경기도 용인시 처인구 원삼면</b><span>Memorial, History &amp; Legacy</span></p><p>최종건 창업회장과 최종현 선대회장의<br />도전과 열정, 경영철학과 발자취를 기리고<br />오늘의 SK로 이어진 역사와 정신을 되새기는 공간입니다.</p></div>
           </div>
         </div>
       </div>
-      <div className="collection-side"><div className="collection-side-head"><span>전시/소장품</span><AssetArrowButton onClick={() => undefined} label="다음 소장품" /></div><div className="collection-object-stage">{sideObjects.map((item) => <motion.button type="button" key={item.className} className={`side-object ${item.className}`} whileHover={{ scale: 1.08 }} transition={spring}><img src={item.image} alt={item.label} /></motion.button>)}</div></div>
+      <div className="collection-side"><div className="collection-side-head"><span>전시/소장품</span><AssetArrowButton onClick={() => undefined} label="다음 소장품" /></div><div className="collection-object-stage">{sideObjects.map((item) => <motion.button type="button" key={item.className} className={`side-object ${item.className}`} onHoverStart={() => setHovered(item.className)} onHoverEnd={() => setHovered(null)} whileHover={{ scale: 1.08 }} transition={spring}><img src={item.image} alt={item.label} /><motion.img className="color-layer" src={item.colorImage} alt="" animate={{ opacity: hovered === item.className ? 1 : 0 }} transition={{ duration: .45, ease: [0.16, 1, 0.3, 1] }} /></motion.button>)}</div></div>
     </section>
   );
 }
