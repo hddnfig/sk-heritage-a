@@ -243,10 +243,25 @@ function Hero() {
   const reduce = useReducedMotion();
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [targetIndex, setTargetIndex] = useState(1);
+  const [transitioning, setTransitioning] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [peekHovered, setPeekHovered] = useState(false);
   const slide = heroSlides[index];
-  const move = useCallback((step: number) => { setDirection(step); setIndex((current) => (current + step + 3) % 3); }, []);
+  const incomingIndex = transitioning ? targetIndex : (index + 1) % heroSlides.length;
+  const incomingSlide = heroSlides[incomingIndex];
+  const move = useCallback((step: number) => {
+    if (transitioning) return;
+    setDirection(step);
+    setTargetIndex((index + step + heroSlides.length) % heroSlides.length);
+    setPeekHovered(false);
+    setTransitioning(true);
+  }, [index, transitioning]);
+  const finishMove = () => {
+    if (!transitioning) return;
+    setIndex(targetIndex);
+    setTransitioning(false);
+  };
   const reveal = (delay: number, x = 0, y = 18) => reduce
     ? { initial: false as const }
     : {
@@ -271,39 +286,37 @@ function Hero() {
         style={{ transformOrigin: "left center" }}
       />
       <motion.div className="hero-control-row" {...reveal(0.68, -18, 0)}><Pager index={index} previous={() => move(-1)} next={() => move(1)} /><span>{slide.label}</span></motion.div>
-      <motion.div
-        className="hero-image"
-        onHoverStart={() => setHovered(true)}
-        onHoverEnd={() => setHovered(false)}
-        initial={reduce ? false : { opacity: 0, x: 84, clipPath: "inset(0 100% 0 0)" }}
-        animate={{ opacity: 1, x: 0, clipPath: "inset(0 0% 0 0)" }}
-        transition={{
-          opacity: { duration: reduce ? 0 : 0.78, delay: reduce ? 0 : 0.8 },
-          x: { duration: reduce ? 0 : 0.92, delay: reduce ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] },
-          clipPath: { duration: reduce ? 0 : 1.05, delay: reduce ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] },
-        }}
-      >
-        <AnimatePresence initial={false} custom={direction} mode="popLayout">
-          <motion.img
-            className={`hero-asset-${slide.imageClass}`}
-            key={slide.image}
-            src={slide.image}
-            alt={slide.title.replace("\n", " ")}
-            initial={{ x: direction * 180, opacity: 0, scale: 1 }}
-            animate={{ x: 0, opacity: 1, scale: hovered && !reduce ? 1.035 : 1 }}
-            exit={{ x: direction * -80, opacity: 0, scale: 1 }}
-            transition={spring}
-          />
-        </AnimatePresence>
-      </motion.div>
-      <motion.div className="hero-copy" {...reveal(0.94, 36, 0)}>
-        <AnimatePresence initial={false} custom={direction} mode="wait">
-          <motion.div key={slide.title} className="hero-copy-motion" custom={direction} variants={{ enter: (d: number) => ({ x: d * 90, opacity: 0 }), show: { x: 0, opacity: 1 }, exit: (d: number) => ({ x: d * -45, opacity: 0 }) }} initial="enter" animate="show" exit="exit" transition={swift}>
+      <div className="hero-panel-stage">
+        <motion.div
+          className="hero-panel hero-panel-current"
+          initial={reduce ? false : { opacity: 0, x: 84 }}
+          animate={{ opacity: transitioning ? 0 : 1, x: transitioning ? direction * -44 : 0 }}
+          transition={{ duration: reduce ? 0.01 : transitioning ? 0.48 : 0.08, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="hero-image" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+            <motion.img className={`hero-asset-${slide.imageClass}`} src={slide.image} alt={slide.title.replace("\n", " ")} animate={{ scale: hovered && !reduce ? 1.035 : 1 }} transition={spring} />
+          </div>
+          <div className="hero-copy"><div className="hero-copy-motion">
             <h2>{slide.title.split("\n").map((line) => <span key={line}>{line}</span>)}</h2>
             <div><p>{slide.body}</p><a className="figma-cta" href="#collection"><img src={assetUrl("cta-arrow.png")} alt="" /><strong>방문예약하러가기</strong></a></div>
-          </motion.div>
-        </AnimatePresence>
-      </motion.div>
+          </div></div>
+        </motion.div>
+        <motion.div
+          key={`incoming-${incomingIndex}-${direction}`}
+          className="hero-panel hero-panel-incoming"
+          initial={{ x: direction < 0 ? -1249 : 1249 }}
+          animate={{ x: transitioning ? 0 : direction < 0 ? -1249 : 1249 }}
+          transition={{ duration: reduce ? 0.01 : 1.18, delay: reduce ? 0 : transitioning ? 0.24 : 0, ease: [0.16, 1, 0.3, 1] }}
+          onAnimationComplete={finishMove}
+          aria-hidden={!transitioning}
+        >
+          <div className="hero-image"><img className={`hero-asset-${incomingSlide.imageClass}`} src={incomingSlide.image} alt="" /></div>
+          <div className="hero-copy"><div className="hero-copy-motion">
+            <h2>{incomingSlide.title.split("\n").map((line) => <span key={line}>{line}</span>)}</h2>
+            <div><p>{incomingSlide.body}</p><a className="figma-cta" href="#collection" tabIndex={transitioning ? 0 : -1}><img src={assetUrl("cta-arrow.png")} alt="" /><strong>방문예약하러가기</strong></a></div>
+          </div></div>
+        </motion.div>
+      </div>
       <motion.button
         className="hero-peek"
         type="button"
@@ -313,13 +326,12 @@ function Hero() {
         aria-label="다음 콘텐츠 보기"
         initial={reduce ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
-        whileHover={{ x: -10 }}
+        whileHover={transitioning ? undefined : { x: -10 }}
         transition={{
           opacity: { duration: reduce ? 0 : 0.9, delay: reduce ? 0 : 1.08, ease: [0.16, 1, 0.3, 1] },
           x: spring,
         }}
       >
-        <AnimatePresence initial={false} mode="popLayout"><motion.img className={`hero-asset-${slide.peekClass}`} key={slide.peek} src={slide.peek} alt="다음 장면" initial={{ x: 80, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -80, opacity: 0 }} transition={spring} /></AnimatePresence>
         <motion.span className="hero-peek-dim" animate={{ opacity: peekHovered ? 1 : 0 }} transition={{ duration: reduce ? 0 : 0.55, ease: [0.16, 1, 0.3, 1] }} />
         <motion.img className="hero-peek-arrow" src={assetUrl("large-arrow.png")} alt="" animate={{ opacity: peekHovered ? 1 : 0, x: peekHovered ? 0 : -24 }} transition={{ duration: reduce ? 0 : 0.72, ease: [0.16, 1, 0.3, 1] }} />
       </motion.button>

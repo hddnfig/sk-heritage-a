@@ -75,12 +75,15 @@ main { width: 1920px; overflow: hidden; }
 .pager button span { width: 7px; height: 7px; overflow: hidden; color: transparent; border-left: 1.5px solid #000; border-bottom: 1.5px solid #000; transform: rotate(45deg); }
 .pager button:last-child span { transform: rotate(225deg); }
 .pager b { display: block; height: 18px; font-weight: 400; line-height: 18px; }
-.hero-image { position: absolute; left: 510px; top: 524px; width: 722px; height: 536px; overflow: hidden; background: #ff9d9d; }
+.hero-panel-stage { position: absolute; left: 510px; top: 524px; width: calc(100% - 510px); height: 536px; overflow: hidden; }
+.hero-panel { position: absolute; left: 0; top: 0; width: 1086px; height: 536px; will-change: transform, opacity; }
+.hero-panel-incoming { z-index: 2; }
+.hero-image { position: absolute; left: 0; top: 0; width: 722px; height: 536px; overflow: hidden; background: #ff9d9d; }
 .hero-image img { position: absolute; top: 0; max-width: none; object-fit: cover; }
 .hero-image img.hero-asset-seonhyewon { left: 0; width: 731.7px; height: 547.89px; }
 .hero-image img.hero-asset-memorial { left: -28px; width: 952.383px; height: 536px; }
 .hero-image img.hero-asset-oldhouse { left: -51px; width: 824px; height: 536px; }
-.hero-copy { position: absolute; left: 1252px; top: 524px; width: 344px; height: 536px; }
+.hero-copy { position: absolute; left: 742px; top: 0; width: 344px; height: 536px; }
 .hero-copy-motion { height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
 .hero-copy h2 { margin: 0; font-size: 28px; line-height: 1.35; font-weight: 600; }
 .hero-copy h2 span { display: block; }
@@ -89,10 +92,6 @@ main { width: 1920px; overflow: hidden; }
 .figma-cta img { width: 68px; height: 24px; }
 .figma-cta strong { font-weight: 700; }
 .hero-peek { position: absolute; left: 1759px; top: 524px; width: 161px; height: 536px; overflow: hidden; text-align: left; }
-.hero-peek img { position: absolute; top: 0; height: 536px; max-width: none; object-fit: cover; object-position: left; }
-.hero-peek img.hero-asset-memorial { left: 0; width: 952.383px; }
-.hero-peek img.hero-asset-oldhouse { left: 0; width: 824px; }
-.hero-peek img.hero-asset-seonhyewon { left: 0; width: 731.7px; height: 547.89px; }
 .hero-peek-dim { position: absolute; z-index: 2; inset: 0; background: rgba(0,0,0,.36); pointer-events: none; }
 .hero-peek img.hero-peek-arrow { position: absolute; z-index: 3; left: 50%; top: 50%; width: 148px; height: 44px; margin-left: -74px; margin-top: -22px; object-fit: contain; filter: brightness(0) invert(1); pointer-events: none; }
 
