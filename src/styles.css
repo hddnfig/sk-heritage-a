@@ -49,7 +49,7 @@ main { width: 1920px; overflow: hidden; }
 .figma-cta { display: flex; align-items: center; gap: 10px; color: var(--accent); font-size: 18px; line-height: 1; }
 .figma-cta img { width: 68px; height: 24px; }
 .figma-cta strong { font-weight: 700; }
-.hero-peek { position: absolute; left: 1759px; top: 524px; width: 161px; height: 536px; overflow: hidden; }
+.hero-peek { position: absolute; left: 1759px; top: 524px; width: 161px; height: 536px; overflow: hidden; text-align: left; }
 .hero-peek img { width: 952.383px; height: 536px; max-width: none; object-fit: cover; object-position: left; }
 
 .history { background: #fff; border-top: 1px solid #000; border-bottom: 1px solid #000; }

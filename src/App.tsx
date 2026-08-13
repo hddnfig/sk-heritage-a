@@ -78,9 +78,10 @@ function Pager({ index, previous, next, total = 3 }: { index: number; previous: 
 
 function Hero() {
   const [index, setIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
   const [hovered, setHovered] = useState(false);
   const slide = heroSlides[index];
-  const move = useCallback((step: number) => setIndex((current) => (current + step + 3) % 3), []);
+  const move = useCallback((step: number) => { setDirection(step); setIndex((current) => (current + step + 3) % 3); }, []);
   return (
     <section className="canvas-section hero" id="top">
       <div className="hero-title-symbol" aria-label="HERITAGE"><img src="/assets/heritage-symbol.png" alt="HERITAGE" /></div>
@@ -92,19 +93,19 @@ function Hero() {
       <div className="hero-rule" />
       <div className="hero-control-row"><Pager index={index} previous={() => move(-1)} next={() => move(1)} /><span>{slide.label}</span></div>
       <motion.div className="hero-image" onHoverStart={() => setHovered(true)} onHoverEnd={() => setHovered(false)} animate={{ width: hovered ? 760 : 722 }} transition={spring}>
-        <AnimatePresence initial={false} mode="popLayout">
-          <motion.img key={slide.image} src={slide.image} alt="선혜원" initial={{ x: 90, scale: 1.05 }} animate={{ x: 0, scale: hovered ? 1.035 : 1 }} exit={{ x: -90, opacity: 0 }} transition={spring} />
+        <AnimatePresence initial={false} custom={direction} mode="popLayout">
+          <motion.img key={slide.image} src={slide.image} alt={slide.title.replace("\n", " ")} custom={direction} variants={{ enter: (d: number) => ({ x: d * 180, opacity: 0 }), show: { x: 0, opacity: 1 }, exit: (d: number) => ({ x: d * -80, opacity: 0 }) }} initial="enter" animate="show" exit="exit" transition={spring} />
         </AnimatePresence>
       </motion.div>
       <div className="hero-copy">
-        <AnimatePresence initial={false} mode="wait">
-          <motion.div key={slide.title} className="hero-copy-motion" initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -32, opacity: 0 }} transition={swift}>
+        <AnimatePresence initial={false} custom={direction} mode="wait">
+          <motion.div key={slide.title} className="hero-copy-motion" custom={direction} variants={{ enter: (d: number) => ({ x: d * 90, opacity: 0 }), show: { x: 0, opacity: 1 }, exit: (d: number) => ({ x: d * -45, opacity: 0 }) }} initial="enter" animate="show" exit="exit" transition={swift}>
             <h2>{slide.title.split("\n").map((line) => <span key={line}>{line}</span>)}</h2>
             <div><p>{slide.body}</p><a className="figma-cta" href="#collection"><img src="/assets/cta-arrow.png" alt="" /><strong>방문예약하러가기</strong></a></div>
           </motion.div>
         </AnimatePresence>
       </div>
-      <div className="hero-peek"><AnimatePresence initial={false} mode="popLayout"><motion.img key={slide.peek} src={slide.peek} alt="다음 장면" initial={{ x: 80 }} animate={{ x: 0 }} exit={{ x: -80 }} transition={spring} /></AnimatePresence></div>
+      <motion.button className="hero-peek" type="button" onClick={() => move(1)} aria-label="다음 콘텐츠 보기" whileHover={{ x: -10 }} transition={spring}><AnimatePresence initial={false} mode="popLayout"><motion.img key={slide.peek} src={slide.peek} alt="다음 장면" initial={{ x: 80, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -80, opacity: 0 }} transition={spring} /></AnimatePresence></motion.button>
     </section>
   );
 }
