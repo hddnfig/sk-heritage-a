@@ -6,6 +6,14 @@ const assetUrl = (filename: string) => `./assets/${filename}`;
 
 const swift = { duration: 0.72, ease: [0.16, 1, 0.3, 1] } as const;
 const spring = { type: "spring", stiffness: 145, damping: 24, mass: 0.9 } as const;
+const initialRevealTimeline = {
+  grid: 0.04,
+  header: 0.18,
+  heroLeft: 0.64,
+  heroRight: 0.98,
+  historyLeft: 1.24,
+  historyRight: 1.58,
+} as const;
 
 function DeferredSection({ id, className, children, threshold = 0.5, fade = true }: { id: string; className?: string; children: ReactNode; threshold?: number; fade?: boolean }) {
   const reduce = useReducedMotion();
@@ -151,21 +159,21 @@ function Hero() {
           event.preventDefault();
           window.location.reload();
         }}
-        {...reveal(0.08, -24, 0)}
+        {...reveal(initialRevealTimeline.header, -24, 0)}
       ><img src={assetUrl("heritage-symbol.png")} alt="HERITAGE" /></motion.a>
-      <motion.nav className="top-nav" aria-label="주요 메뉴" {...reveal(0.2, 0, -14)}>
+      <motion.nav className="top-nav" aria-label="주요 메뉴" {...reveal(initialRevealTimeline.header + 0.1, 0, -14)}>
         <a href="#">그룹역사</a><a href="#/h-space">H.Space</a><a href="#">전시/소장품</a><a href="#">뉴스보드</a>
       </motion.nav>
-      <motion.div className="hero-sk-symbol" {...reveal(0.32, 24, 0)}><img src={assetUrl("sk-symbol.png")} alt="SK" /></motion.div>
-      <motion.p className="hero-intro" {...reveal(0.44)}>시간이 흘러도 변하지 않는 가치가 있습니다. 한 사람의 신념에서 시작된 길은 세대를 지나 이어지고,<br />수많은 도전과 선택의 순간들이 모여 오늘의 SK를 만들었습니다. 그 시간 속에 쌓인 이야기와 가치를<br />SK Heritage에서 만나보세요.</motion.p>
+      <motion.div className="hero-sk-symbol" {...reveal(initialRevealTimeline.header + 0.2, 24, 0)}><img src={assetUrl("sk-symbol.png")} alt="SK" /></motion.div>
+      <motion.p className="hero-intro" {...reveal(initialRevealTimeline.header + 0.3)}>시간이 흘러도 변하지 않는 가치가 있습니다. 한 사람의 신념에서 시작된 길은 세대를 지나 이어지고,<br />수많은 도전과 선택의 순간들이 모여 오늘의 SK를 만들었습니다. 그 시간 속에 쌓인 이야기와 가치를<br />SK Heritage에서 만나보세요.</motion.p>
       <motion.div
         className="hero-rule"
         initial={reduce ? false : { opacity: 0, scaleX: 0 }}
         animate={{ opacity: 1, scaleX: 1 }}
-        transition={{ duration: reduce ? 0 : 0.9, delay: reduce ? 0 : 0.56, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: reduce ? 0 : 0.96, delay: reduce ? 0 : initialRevealTimeline.grid, ease: [0.16, 1, 0.3, 1] }}
         style={{ transformOrigin: "left center" }}
       />
-      <motion.div className="hero-control-row" {...reveal(0.68, -18, 0)}><Pager index={index} previous={() => move(-1)} next={() => move(1)} /><span>{slide.label}</span></motion.div>
+      <motion.div className="hero-control-row" {...reveal(initialRevealTimeline.heroLeft - 0.08, -18, 0)}><Pager index={index} previous={() => move(-1)} next={() => move(1)} /><span>{slide.label}</span></motion.div>
       <div className="hero-panel-stage">
         <motion.div
           className="hero-panel hero-panel-current"
@@ -176,7 +184,7 @@ function Hero() {
             : transitioning
               ? { duration: 0.58, ease: [0.76, 0, 0.24, 1] }
               : initialPanelReveal.current
-                ? { duration: 0.82, delay: 1.5, ease: [0.16, 1, 0.3, 1] }
+                ? { duration: 0.92, delay: initialRevealTimeline.heroLeft, ease: [0.16, 1, 0.3, 1] }
                 : { duration: 0 }}
           onAnimationComplete={() => {
             if (!transitioning) initialPanelReveal.current = false;
@@ -189,12 +197,12 @@ function Hero() {
             <motion.h2
               initial={reduce || index !== 0 ? false : { y: 28, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: reduce ? 0 : 0.82, delay: reduce ? 0 : 0.78, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: reduce ? 0 : 0.82, delay: reduce ? 0 : initialRevealTimeline.heroLeft + 0.16, ease: [0.16, 1, 0.3, 1] }}
             >{slide.title.split("\n").map((line) => <span key={line}>{line}</span>)}</motion.h2>
             <motion.div
               initial={reduce || index !== 0 ? false : { clipPath: "inset(0 0 100% 0)", y: 28, opacity: 0 }}
               animate={{ clipPath: "inset(0 0 0% 0)", y: 0, opacity: 1 }}
-              transition={{ duration: reduce ? 0 : 0.92, delay: reduce ? 0 : 1.5, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: reduce ? 0 : 0.92, delay: reduce ? 0 : initialRevealTimeline.heroLeft + 0.54, ease: [0.16, 1, 0.3, 1] }}
             ><p>{slide.body}</p><a className="figma-cta" href="#/h-space"><img src={assetUrl("cta-arrow.png")} alt="" /><strong>방문 예약하기</strong></a></motion.div>
           </div></div>
         </motion.div>
@@ -212,7 +220,7 @@ function Hero() {
                 }
               : {
                   x: { duration: 0 },
-                  opacity: { duration: 0.82, delay: initialPanelReveal.current ? 2.72 : 0.48, ease: [0.16, 1, 0.3, 1] },
+                  opacity: { duration: 0.9, delay: initialPanelReveal.current ? initialRevealTimeline.heroRight : 0.48, ease: [0.16, 1, 0.3, 1] },
                 }}
           aria-hidden={!transitioning}
         >
@@ -240,7 +248,7 @@ function Hero() {
         aria-label="다음 콘텐츠 보기"
         initial={reduce ? false : { opacity: 0, x: 22 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ opacity: { duration: reduce ? 0 : 0.82, delay: reduce ? 0 : 2.72, ease: [0.16, 1, 0.3, 1] }, x: { duration: reduce ? 0 : 0.82, delay: reduce ? 0 : 2.72, ease: [0.16, 1, 0.3, 1] } }}
+        transition={{ opacity: { duration: reduce ? 0 : 0.9, delay: reduce ? 0 : initialRevealTimeline.heroRight, ease: [0.16, 1, 0.3, 1] }, x: { duration: reduce ? 0 : 0.9, delay: reduce ? 0 : initialRevealTimeline.heroRight, ease: [0.16, 1, 0.3, 1] } }}
       >
         <motion.span className="hero-peek-dim" animate={{ opacity: peekHovered ? 1 : 0 }} transition={{ duration: reduce ? 0 : 0.55, ease: [0.16, 1, 0.3, 1] }} />
         <motion.img className="hero-peek-arrow" src={assetUrl("large-arrow.png")} alt="" animate={{ opacity: peekHovered ? 1 : 0, x: peekHovered ? 0 : -24 }} transition={{ duration: reduce ? 0 : 0.72, ease: [0.16, 1, 0.3, 1] }} />
@@ -278,7 +286,7 @@ function History() {
           className="history-primary"
           initial={reduce ? false : { opacity: 0, y: 18, scale: 0.992 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: reduce ? 0 : 1.35, delay: reduce ? 0 : 2.5, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: reduce ? 0 : 1.15, delay: reduce ? 0 : initialRevealTimeline.historyLeft, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="history-meta"><span>{slide.person}</span><span>{slide.range}</span></div>
           <AnimatePresence initial={false} custom={direction} mode="popLayout">
@@ -322,7 +330,7 @@ function History() {
           onHoverEnd={() => setNextHovered(false)}
           initial={reduce ? false : { opacity: 0, x: 28 }}
           animate={{ opacity: 1, x: 0, backgroundColor: nextHovered ? "rgba(240, 83, 39, 0.09)" : "rgba(255, 255, 255, 0)" }}
-          transition={{ opacity: { duration: reduce ? 0 : 0.9, delay: reduce ? 0 : 4.08, ease: [0.16, 1, 0.3, 1] }, x: { duration: reduce ? 0 : 0.9, delay: reduce ? 0 : 4.08, ease: [0.16, 1, 0.3, 1] }, backgroundColor: { duration: reduce ? 0 : 0.45, ease: [0.16, 1, 0.3, 1] } }}
+          transition={{ opacity: { duration: reduce ? 0 : 1.05, delay: reduce ? 0 : initialRevealTimeline.historyRight, ease: [0.16, 1, 0.3, 1] }, x: { duration: reduce ? 0 : 1.05, delay: reduce ? 0 : initialRevealTimeline.historyRight, ease: [0.16, 1, 0.3, 1] }, backgroundColor: { duration: reduce ? 0 : 0.45, ease: [0.16, 1, 0.3, 1] } }}
         >
           <div><span>{slide.nextPerson}</span><motion.img className="large-arrow-static" src={assetUrl("large-arrow.png")} alt="" animate={nextHovered ? { x: [0, 18, 5, 18, 0], opacity: [1, .68, 1, .78, 1] } : { x: 0, opacity: 1 }} transition={nextHovered ? { duration: 3.2, ease: "easeInOut", repeat: Infinity, repeatDelay: 0.45 } : spring} /></div>
           <div className="history-next-image"><AnimatePresence initial={false} mode="popLayout"><motion.img key={slide.nextImage} src={slide.nextImage} alt={slide.nextPerson} initial={{ x: -90, opacity: 0 }} animate={{ x: 0, opacity: 1, scale: nextHovered ? 1.065 : 1 }} exit={{ x: 90, opacity: 0 }} transition={spring} /></AnimatePresence></div>
