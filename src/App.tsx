@@ -377,11 +377,14 @@ function Timeline() {
   const gateTimer = useRef<number | undefined>(undefined);
   const lockReleaseAt = useRef(0);
   const sequenceTimers = useRef<number[]>([]);
+  const entrySnapFrame = useRef<number | undefined>(undefined);
+  const entrySnapInProgress = useRef(false);
   const previousEra = useRef(0);
   const entrySnapArmed = useRef(true);
 
   useEffect(() => () => {
     if (gateTimer.current !== undefined) window.clearTimeout(gateTimer.current);
+    if (entrySnapFrame.current !== undefined) window.cancelAnimationFrame(entrySnapFrame.current);
     sequenceTimers.current.forEach(window.clearTimeout);
     delete document.documentElement.dataset.timelineLocked;
   }, []);
@@ -408,7 +411,10 @@ function Timeline() {
         entrySnapArmed.current = true;
         gate.current = "free";
         if (gateTimer.current !== undefined) window.clearTimeout(gateTimer.current);
+        if (entrySnapFrame.current !== undefined) window.cancelAnimationFrame(entrySnapFrame.current);
         gateTimer.current = undefined;
+        entrySnapFrame.current = undefined;
+        entrySnapInProgress.current = false;
         delete document.documentElement.dataset.timelineLocked;
       }
     }, { threshold: [0.04, 0.12, 0.55] });
@@ -453,15 +459,44 @@ function Timeline() {
       check();
     };
     const holdPinnedPosition = () => {
+      if (entrySnapInProgress.current) return;
       if (gate.current !== "free" && Math.abs(window.scrollY - lockedScrollY.current) > 1) {
         window.scrollTo(0, lockedScrollY.current);
       }
+    };
+    const animateEntrySnap = (targetY: number) => {
+      const startY = window.scrollY;
+      const distance = targetY - startY;
+      const duration = reduce ? 0 : 660;
+      const startedAt = performance.now();
+      entrySnapInProgress.current = true;
+
+      const render = (now: number) => {
+        const progress = duration === 0 ? 1 : Math.min(1, (now - startedAt) / duration);
+        const eased = 1 - Math.pow(1 - progress, 4);
+        const nextY = startY + distance * eased;
+        lockedScrollY.current = nextY;
+        window.scrollTo(0, nextY);
+        if (progress < 1) {
+          entrySnapFrame.current = window.requestAnimationFrame(render);
+          return;
+        }
+        lockedScrollY.current = targetY;
+        entrySnapFrame.current = undefined;
+        entrySnapInProgress.current = false;
+      };
+
+      if (entrySnapFrame.current !== undefined) window.cancelAnimationFrame(entrySnapFrame.current);
+      entrySnapFrame.current = window.requestAnimationFrame(render);
     };
     const handleWheel = (event: WheelEvent) => {
       if (Math.abs(event.deltaY) < 18) return;
       if (event.deltaY < 0) {
         if (gateTimer.current !== undefined) window.clearTimeout(gateTimer.current);
+        if (entrySnapFrame.current !== undefined) window.cancelAnimationFrame(entrySnapFrame.current);
         gateTimer.current = undefined;
+        entrySnapFrame.current = undefined;
+        entrySnapInProgress.current = false;
         gate.current = "free";
         delete document.documentElement.dataset.timelineLocked;
         return;
@@ -477,12 +512,12 @@ function Timeline() {
       if (gate.current === "free" && entrySnapArmed.current && visibleRatio >= 0.5) {
         event.preventDefault();
         const exactTop = window.scrollY + bounds.top;
-        window.scrollTo(0, exactTop);
         entrySnapArmed.current = false;
-        lockedScrollY.current = exactTop;
+        lockedScrollY.current = window.scrollY;
         gate.current = "entry";
         lockReleaseAt.current = performance.now() + (reduce ? 32 : 1680);
         document.documentElement.dataset.timelineLocked = "true";
+        animateEntrySnap(exactTop);
         settleGate("ready");
         return;
       }
