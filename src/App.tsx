@@ -18,13 +18,13 @@ function DeferredSection({ id, className, children }: { id: string; className?: 
       if (!entry.isIntersecting) return;
       setMounted(true);
       observer.disconnect();
-    }, { rootMargin: "0px 0px -30% 0px", threshold: 0.04 });
+    }, { rootMargin: "0px", threshold: 0.18 });
     observer.observe(placeholder);
     return () => observer.disconnect();
   }, [mounted]);
 
-  if (!mounted) return <div ref={placeholderRef} id={id} className={`deferred-section-placeholder ${className ?? ""}`} data-section-snap="true" aria-hidden="true" />;
-  return <motion.div className={`deferred-section-content ${className ?? ""}`} data-section-snap="true" initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduce ? 0 : 0.72, ease: [0.16, 1, 0.3, 1] }}>{children}</motion.div>;
+  if (!mounted) return <div ref={placeholderRef} id={id} className={`deferred-section-placeholder ${className ?? ""}`} data-deferred-section={id} data-section-snap="true" aria-hidden="true" />;
+  return <motion.div className={`deferred-section-content ${className ?? ""}`} data-deferred-section={id} data-section-snap="true" initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduce ? 0 : 0.72, ease: [0.16, 1, 0.3, 1] }}>{children}</motion.div>;
 }
 
 function SectionSnapController() {
