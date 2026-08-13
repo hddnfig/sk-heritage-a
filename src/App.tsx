@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 const swift = { duration: 0.72, ease: [0.16, 1, 0.3, 1] } as const;
@@ -140,45 +140,93 @@ function History() {
   );
 }
 
-const timelineItems = [
-  { className: "timeline-factory", image: "/assets/factory-v2.png", title: "창립무렵의 선경직물", body: "최종건 창업회장은 한국전쟁 중 폐허가 된 선경직물 건물을 복구해 재건하기로 결심, 건물 복구와 흩어진 부속품을 모아 직기를 재조립하였습니다." },
-  { className: "timeline-export", image: "/assets/export-v2.png", title: "종합상사 설립, 수출 선봉에 서다", body: "인도네시아에 수출하기 위해 폴리에스터 원면을 선적하고 있습니다. 선경은 1976년 수출액 1억 1,335만 달러, 당기순이익 65만 4,000달러의 실적을 올렸습니다." },
-  { className: "timeline-cdma", image: "/assets/cdma-v2.png", title: "세계 최초 CDMA 이동전화 상용화", body: "한국이동통신(현 SK텔레콤)은 세계 최초로 CDMA 이동전화 상용 서비스에 성공, 세계 CDMA 리더로 부상했습니다." },
-];
-
 const timelineEras = [
-  { year: "1953", items: timelineItems },
-  { year: "1976", items: [timelineItems[1], timelineItems[2], timelineItems[0]] },
-  { year: "1996", items: [timelineItems[2], timelineItems[0], timelineItems[1]] },
+  {
+    year: "1953",
+    activeTick: 11,
+    statement: ["새로운 가능성을 향한 도전과", "흔들리지 않는 신념은 오늘의 SK를", "이루는 단단한 뿌리가 되었습니다."],
+    items: [
+      { slot: "a", image: "/assets/timeline-1953-factory.png", title: "창립무렵의 선경직물", body: "최종건 창업회장은 한국전쟁 중 폐허가 된 선경직물 건물을 복구해 재건하기로 결심, 건물 복구와 흩어진 부속품을 모아 직기를 재조립하였습니다." },
+      { slot: "b", image: "/assets/timeline-1953-blanket.png", title: "봉황새 이불감", body: "봉황새 이불감은 출시하자마자 날개 돋친 듯 팔렸고, 한동안 예비 신부가 꼭 준비해야 할 필수 혼숫감이 될 정도로 큰 인기를 누렸다." },
+      { slot: "c", image: "/assets/timeline-1953-founding.png", title: "선경직물 창립", body: "한국전쟁의 폐허 속에서 선경직물을 창업, SK의 역사가 시작되었습니다." },
+    ],
+  },
+  {
+    year: "1970",
+    activeTick: 10,
+    statement: ["SK의 무대는 더 넓은 세상으로", "확장 되었습니다. 끊임없는 변화와", "도전은 항상 새로운 길을 열었습니다."],
+    items: [
+      { slot: "a", image: "/assets/timeline-1970-export.png", title: "종합상사 설립, 수출 선봉에 서다", body: "인도네시아에 수출하기 위해 폴리에스터 원면을 선적하고 있습니다. 선경은 1976년 수출액 1억 1,335만 달러, 당기순이익 65만 4,000달러의 실적을 올렸습니다." },
+      { slot: "b", image: "/assets/timeline-1970-cdma.png", title: "세계 최초 CDMA 이동전화 상용화", body: "한국이동통신(현 SK텔레콤)은 세계 최초로 CDMA 이동전화 상용 서비스에 성공, 세계 CDMA 리더로 부상했습니다." },
+      { slot: "c", image: "/assets/timeline-1970-film.png", title: "국내 최초 폴리에스터 필름 개발", body: "선경화학(현 SKC)은 국내 최초로 폴리에스터 필름 개발에 성공했습니다." },
+    ],
+  },
 ];
 
 function Timeline() {
   const [active, setActive] = useState<number | null>(null);
   const [era, setEra] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const sectionRef = useRef<HTMLElement | null>(null);
   const wheelLock = useRef(false);
-  const changeEra = (step: number) => setEra((current) => Math.max(0, Math.min(timelineEras.length - 1, current + step)));
-  const handleWheel = (event: React.WheelEvent<HTMLElement>) => {
-    if (Math.abs(event.deltaY) < 20 || wheelLock.current) return;
-    const next = Math.max(0, Math.min(timelineEras.length - 1, era + (event.deltaY > 0 ? 1 : -1)));
-    if (next === era) return;
-    event.preventDefault();
-    wheelLock.current = true;
-    setEra(next);
-    window.setTimeout(() => { wheelLock.current = false; }, 720);
-  };
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    let wasInside = false;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.intersectionRatio >= 0.55 && !wasInside) {
+        wasInside = true;
+        setDirection(1);
+        setEra(0);
+      } else if (entry.intersectionRatio < 0.1) {
+        wasInside = false;
+      }
+    }, { threshold: [0.1, 0.55] });
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const handleWheel = (event: WheelEvent) => {
+      if (Math.abs(event.deltaY) < 20 || wheelLock.current) return;
+      const step = event.deltaY > 0 ? 1 : -1;
+      const next = Math.max(0, Math.min(timelineEras.length - 1, era + step));
+      if (next === era) return;
+      event.preventDefault();
+      wheelLock.current = true;
+      setDirection(step);
+      setEra(next);
+      window.setTimeout(() => { wheelLock.current = false; }, 900);
+    };
+    section.addEventListener("wheel", handleWheel, { passive: false });
+    return () => section.removeEventListener("wheel", handleWheel);
+  }, [era]);
+
   const currentEra = timelineEras[era];
   return (
-    <section className="canvas-section timeline" id="space" onWheel={handleWheel}>
-      <h2 className="timeline-statement">한 세대의 신념이,<br />다음 시대의 가치로.</h2>
-      <AnimatePresence initial={false} mode="popLayout">
-        <motion.div className="timeline-era" key={currentEra.year} initial={{ x: 260, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -260, opacity: 0 }} transition={swift}>
-          {currentEra.items.map((item, index) => <motion.article key={`${currentEra.year}-${item.className}`} className={`timeline-record ${item.className}`} onHoverStart={() => setActive(index)} onHoverEnd={() => setActive(null)}><motion.img src={item.image} alt={item.title} animate={{ scale: active === index ? 1.035 : 1 }} transition={spring} /><div><h3>{item.title}</h3><p>{item.body}</p></div></motion.article>)}
+    <section ref={sectionRef} className="canvas-section timeline" id="space">
+      <AnimatePresence initial={false} custom={direction} mode="popLayout">
+        <motion.div
+          className={`timeline-era era-${currentEra.year}`}
+          key={currentEra.year}
+          custom={direction}
+          variants={{ enter: (d: number) => ({ x: d * 1920 }), show: { x: 0 }, exit: (d: number) => ({ x: d * -1920 }) }}
+          initial="enter"
+          animate="show"
+          exit="exit"
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <h2 className="timeline-statement">{currentEra.statement.map((line) => <span key={line}>{line}</span>)}</h2>
+          {currentEra.items.map((item, index) => <motion.article key={`${currentEra.year}-${item.slot}`} className={`timeline-record slot-${item.slot}`} onHoverStart={() => setActive(index)} onHoverEnd={() => setActive(null)}><motion.img src={item.image} alt={item.title} animate={{ scale: active === index ? 1.035 : 1 }} transition={spring} /><div><h3>{item.title}</h3><p>{item.body}</p></div></motion.article>)}
         </motion.div>
       </AnimatePresence>
-      <motion.div className="timeline-year" key={currentEra.year} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={swift}>{currentEra.year}</motion.div>
+      <div className="timeline-year"><AnimatePresence initial={false} mode="wait"><motion.span key={currentEra.year} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={swift}>{currentEra.year}</motion.span></AnimatePresence></div>
       <div className="year-navigation" aria-label="연도 선택">
-        <div className="year-bars" aria-hidden="true">{Array.from({ length: 12 }).map((_, i) => <i key={i} className={i === era * 4 ? "active" : ""} />)}</div>
-        <div className="year-hit-zones">{timelineEras.map((item, index) => <button key={item.year} type="button" aria-label={`${item.year}년 보기`} onClick={() => setEra(index)} />)}</div>
+        <div className="year-bars" aria-hidden="true">{Array.from({ length: 12 }).map((_, i) => <i key={i} className={i === currentEra.activeTick ? "active" : ""} />)}</div>
+        <div className="year-hit-zones">{timelineEras.map((item, index) => <button key={item.year} type="button" aria-label={`${item.year}년 보기`} onClick={() => { setDirection(index > era ? 1 : -1); setEra(index); }} />)}</div>
       </div>
     </section>
   );
