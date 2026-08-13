@@ -27,6 +27,72 @@ function DeferredSection({ id, className, children }: { id: string; className?: 
   return <motion.div className={`deferred-section-content ${className ?? ""}`} initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduce ? 0 : 0.72, ease: [0.16, 1, 0.3, 1] }}>{children}</motion.div>;
 }
 
+function SectionSnapController() {
+  const reduce = useReducedMotion();
+  const snapLock = useRef(false);
+  const unlockTimer = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    const getTargets = () => {
+      const nodes = Array.from(document.querySelectorAll<HTMLElement>(
+        ".hero, .deferred-section-placeholder, .deferred-section-content, .footer",
+      ));
+      return nodes
+        .map((node) => ({ node, top: window.scrollY + node.getBoundingClientRect().top }))
+        .sort((a, b) => a.top - b.top)
+        .filter((item, index, items) => index === 0 || Math.abs(item.top - items[index - 1].top) > 3);
+    };
+
+    const releaseAfterGesture = () => {
+      if (unlockTimer.current !== undefined) window.clearTimeout(unlockTimer.current);
+      unlockTimer.current = window.setTimeout(() => {
+        snapLock.current = false;
+        unlockTimer.current = undefined;
+      }, reduce ? 120 : 980);
+    };
+
+    const handleWheel = (event: WheelEvent) => {
+      if (event.defaultPrevented || Math.abs(event.deltaY) < 18 || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+      if (snapLock.current) {
+        event.preventDefault();
+        releaseAfterGesture();
+        return;
+      }
+
+      const targets = getTargets();
+      if (targets.length < 2) return;
+      const currentY = window.scrollY;
+      const direction = event.deltaY > 0 ? 1 : -1;
+      let targetIndex = -1;
+
+      if (direction > 0) {
+        targetIndex = targets.findIndex((item) => item.top > currentY + 8);
+      } else {
+        for (let index = targets.length - 1; index >= 0; index -= 1) {
+          if (targets[index].top < currentY - 8) {
+            targetIndex = index;
+            break;
+          }
+        }
+      }
+
+      if (targetIndex < 0) return;
+      event.preventDefault();
+      snapLock.current = true;
+      window.scrollTo({ top: targets[targetIndex].top, behavior: reduce ? "auto" : "smooth" });
+      releaseAfterGesture();
+    };
+
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      if (unlockTimer.current !== undefined) window.clearTimeout(unlockTimer.current);
+    };
+  }, [reduce]);
+
+  return null;
+}
+
 const heroSlides = [
   {
     label: "H.Space",
@@ -340,7 +406,7 @@ function Timeline() {
         return;
       }
       const bounds = section.getBoundingClientRect();
-      const isPinned = Math.abs(bounds.top) <= 12;
+      const isPinned = Math.abs(bounds.top) <= 24;
       if (!isPinned) return;
       const step = event.deltaY > 0 ? 1 : -1;
       const next = Math.max(0, Math.min(timelineEras.length - 1, era + step));
@@ -465,6 +531,7 @@ function Footer() {
 export function App() {
   const reduce = useReducedMotion();
   return <main data-reduced-motion={reduce ? "true" : "false"}>
+    <SectionSnapController />
     <Hero />
     <DeferredSection id="history"><History /></DeferredSection>
     <DeferredSection id="space" className="deferred-timeline"><Timeline /></DeferredSection>
