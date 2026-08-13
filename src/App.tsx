@@ -371,7 +371,7 @@ function News() {
       </article>
       <div className="philosophy">
         <h2>그룹 철학</h2>
-        <div className="philosophy-photo-frame"><motion.img src={assetUrl("news-group-philosophy-v3.png")} alt="그룹 철학" whileHover={{ scale: 1.025 }} transition={spring} /></div>
+        <div className="philosophy-photo-frame"><motion.img src={assetUrl("news-group-philosophy-v4.png")} alt="그룹 철학" whileHover={{ scale: 1.025 }} transition={spring} /></div>
         <motion.p className="philosophy-note" whileHover={{ x: 10 }} transition={spring}>최고의 경쟁력을 보유하고 장기적 생존 조건을 확보하여 지속적으로 경제적 가치, 사회적 가치, 구성원 행복을 창출해 나가는 회사가 SUPEX Company 입니다.</motion.p>
         <div className="philosophy-label label-skms">SK Managemtent System</div><div className="philosophy-label label-supex">Super Excellent Level</div>
         <div className="philosophy-type"><img src={assetUrl("skms-symbol.png")} alt="SKMS" /><i /><img src={assetUrl("supex-symbol.png")} alt="SUPEX" /></div>
