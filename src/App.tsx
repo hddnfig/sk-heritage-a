@@ -631,7 +631,7 @@ function News() {
 }
 
 function Footer() {
-  return <footer className="footer"><div className="footer-statement"><h2>한 세대의 신념이,<br />다음 시대의 가치로.</h2><p>Built through time. Carried into tomorrow.</p></div><nav><a href="#history">그룹역사</a><a href="#/h-space">H.Space</a><a href="#collection">전시/소장품</a><a href="#news">뉴스보드</a></nav><div className="footer-rule" /><img src={assetUrl("sk-logo-v2.png")} alt="SK Heritage" /><span>©SK HERITAGE MUSEUM, All Rights Reserved.</span></footer>;
+  return <footer className="footer"><div className="footer-statement"><h2>한 세대의 신념이,<br />다음 시대의 가치로.</h2><p>Built through time. Carried into tomorrow.</p></div><nav><a href="#history">그룹역사</a><a href="#/h-space">H.Space</a><a href="#collection">전시/소장품</a><a href="#news">뉴스보드</a></nav><div className="footer-rule" /><img src={assetUrl("sk-logo-v2.png")} alt="SK Heritage" /><span>©SK HERITAGE, All Rights Reserved.</span></footer>;
 }
 
 export function App() {
