@@ -7,7 +7,7 @@ const assetUrl = (filename: string) => `./assets/${filename}`;
 const swift = { duration: 0.72, ease: [0.16, 1, 0.3, 1] } as const;
 const spring = { type: "spring", stiffness: 145, damping: 24, mass: 0.9 } as const;
 
-function DeferredSection({ id, className, children }: { id: string; className?: string; children: ReactNode }) {
+function DeferredSection({ id, className, children, threshold = 0.5, fade = true }: { id: string; className?: string; children: ReactNode; threshold?: number; fade?: boolean }) {
   const reduce = useReducedMotion();
   const placeholderRef = useRef<HTMLDivElement | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -16,16 +16,16 @@ function DeferredSection({ id, className, children }: { id: string; className?: 
     const placeholder = placeholderRef.current;
     if (!placeholder || mounted) return;
     const observer = new IntersectionObserver(([entry]) => {
-      if (entry.intersectionRatio < 0.5) return;
+      if (entry.intersectionRatio < threshold) return;
       setMounted(true);
       observer.disconnect();
-    }, { rootMargin: "0px", threshold: 0.5 });
+    }, { rootMargin: "0px", threshold });
     observer.observe(placeholder);
     return () => observer.disconnect();
-  }, [mounted]);
+  }, [mounted, threshold]);
 
   if (!mounted) return <div ref={placeholderRef} id={id} className={`deferred-section-placeholder ${className ?? ""}`} data-deferred-section={id} data-section-snap="true" aria-hidden="true" />;
-  return <motion.div className={`deferred-section-content ${className ?? ""}`} data-deferred-section={id} data-section-snap="true" initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduce ? 0 : 0.72, ease: [0.16, 1, 0.3, 1] }}>{children}</motion.div>;
+  return <motion.div className={`deferred-section-content ${className ?? ""}`} data-deferred-section={id} data-section-snap="true" initial={reduce || !fade ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduce || !fade ? 0 : 0.72, ease: [0.16, 1, 0.3, 1] }}>{children}</motion.div>;
 }
 
 const heroSlides = [
@@ -232,20 +232,40 @@ function History() {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [nextHovered, setNextHovered] = useState(false);
+  const [copyVisible, setCopyVisible] = useState(false);
+  const sectionRef = useRef<HTMLElement | null>(null);
   const slide = historySlides[index];
   const move = (step: number) => { setDirection(step); setIndex((current) => (current + step + historySlides.length) % historySlides.length); };
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || copyVisible) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.intersectionRatio < 0.5) return;
+      setCopyVisible(true);
+      observer.disconnect();
+    }, { threshold: 0.5 });
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [copyVisible]);
+
   return (
-    <section className={`canvas-section history ${index === 1 ? "history-alt" : ""}`} id="history">
+    <section ref={sectionRef} className={`canvas-section history ${index === 1 ? "history-alt" : ""}`} id="history">
       <div className="history-frame">
-        <div className="history-primary">
+        <motion.div
+          className="history-primary"
+          initial={reduce ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: reduce ? 0 : 1, delay: reduce ? 0 : 2.5, ease: [0.16, 1, 0.3, 1] }}
+        >
           <div className="history-meta"><span>{slide.person}</span><span>{slide.range}</span></div>
           <AnimatePresence initial={false} custom={direction} mode="popLayout">
             <motion.img key={slide.image} src={slide.image} alt={slide.person} custom={direction} variants={{ enter: (d: number) => ({ x: d * 180, opacity: 0 }), show: { x: 0, opacity: 1 }, exit: (d: number) => ({ x: d * -180, opacity: 0 }) }} initial="enter" animate="show" exit="exit" transition={spring} />
           </AnimatePresence>
-        </div>
+        </motion.div>
         <div className="history-copy">
           <AnimatePresence mode="wait">
-            <motion.div
+            {copyVisible ? <motion.div
               key={slide.title}
               initial={reduce ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -268,7 +288,7 @@ function History() {
               >
                 {slide.body}
               </motion.p>
-            </motion.div>
+            </motion.div> : null}
           </AnimatePresence>
         </div>
         <motion.button className="history-next" type="button" onClick={() => move(1)} aria-label={`${slide.nextPerson} 보기`} onHoverStart={() => setNextHovered(true)} onHoverEnd={() => setNextHovered(false)} animate={{ backgroundColor: nextHovered ? "rgba(240, 83, 39, 0.09)" : "rgba(255, 255, 255, 0)" }} transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}>
@@ -671,7 +691,7 @@ export function App() {
 
   return <main data-reduced-motion={reduce ? "true" : "false"}>
     <Hero />
-    <DeferredSection id="history"><History /></DeferredSection>
+    <DeferredSection id="history" threshold={0.04} fade={false}><History /></DeferredSection>
     <DeferredSection id="space" className="deferred-timeline"><Timeline /></DeferredSection>
     <DeferredSection id="collection"><Collection /></DeferredSection>
     <DeferredSection id="news"><News /><Footer /></DeferredSection>
