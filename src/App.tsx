@@ -163,8 +163,16 @@ function Hero() {
             <motion.img className={`hero-asset-${slide.imageClass}`} src={slide.image} alt={slide.title.replace("\n", " ")} animate={{ scale: hovered && !reduce ? 1.035 : 1 }} transition={spring} />
           </div>
           <div className="hero-copy"><div className="hero-copy-motion">
-            <h2>{slide.title.split("\n").map((line) => <span key={line}>{line}</span>)}</h2>
-            <div><p>{slide.body}</p><a className="figma-cta" href="#collection"><img src={assetUrl("cta-arrow.png")} alt="" /><strong>방문예약하러가기</strong></a></div>
+            <motion.h2
+              initial={reduce || index !== 0 ? false : { y: 28, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: reduce ? 0 : 0.82, delay: reduce ? 0 : 0.78, ease: [0.16, 1, 0.3, 1] }}
+            >{slide.title.split("\n").map((line) => <span key={line}>{line}</span>)}</motion.h2>
+            <motion.div
+              initial={reduce || index !== 0 ? false : { clipPath: "inset(0 0 100% 0)", y: 28, opacity: 0 }}
+              animate={{ clipPath: "inset(0 0 0% 0)", y: 0, opacity: 1 }}
+              transition={{ duration: reduce ? 0 : 0.92, delay: reduce ? 0 : 1.5, ease: [0.16, 1, 0.3, 1] }}
+            ><p>{slide.body}</p><a className="figma-cta" href="#collection"><img src={assetUrl("cta-arrow.png")} alt="" /><strong>방문예약하러가기</strong></a></motion.div>
           </div></div>
         </motion.div>
         <motion.div
@@ -172,14 +180,22 @@ function Hero() {
           className="hero-panel hero-panel-incoming"
           initial={{ x: direction < 0 ? -1249 : 1249 }}
           animate={{ x: transitioning ? 0 : direction < 0 ? -1249 : 1249 }}
-          transition={{ duration: reduce || !transitioning ? 0 : 1.36, delay: reduce || !transitioning ? 0 : 0.12, ease: [0.76, 0, 0.24, 1] }}
+          transition={{ duration: reduce || !transitioning ? 0 : 1.8, delay: reduce || !transitioning ? 0 : 0.12, ease: [0.76, 0, 0.24, 1] }}
           onAnimationComplete={finishMove}
           aria-hidden={!transitioning}
         >
           <div className="hero-image"><img className={`hero-asset-${incomingSlide.imageClass}`} src={incomingSlide.image} alt="" /></div>
           <div className="hero-copy"><div className="hero-copy-motion">
-            <h2>{incomingSlide.title.split("\n").map((line) => <span key={line}>{line}</span>)}</h2>
-            <div><p>{incomingSlide.body}</p><a className="figma-cta" href="#collection" tabIndex={transitioning ? 0 : -1}><img src={assetUrl("cta-arrow.png")} alt="" /><strong>방문예약하러가기</strong></a></div>
+            <motion.h2
+              initial={false}
+              animate={transitioning ? { y: 0, opacity: 1 } : { y: 28, opacity: 0 }}
+              transition={{ duration: reduce ? 0 : 0.8, delay: reduce || !transitioning ? 0 : 0.55, ease: [0.16, 1, 0.3, 1] }}
+            >{incomingSlide.title.split("\n").map((line) => <span key={line}>{line}</span>)}</motion.h2>
+            <motion.div
+              initial={false}
+              animate={transitioning ? { clipPath: "inset(0 0 0% 0)", y: 0, opacity: 1 } : { clipPath: "inset(0 0 100% 0)", y: 28, opacity: 0 }}
+              transition={{ duration: reduce ? 0 : 0.58, delay: reduce || !transitioning ? 0 : 1.28, ease: [0.16, 1, 0.3, 1] }}
+            ><p>{incomingSlide.body}</p><a className="figma-cta" href="#collection" tabIndex={transitioning ? 0 : -1}><img src={assetUrl("cta-arrow.png")} alt="" /><strong>방문예약하러가기</strong></a></motion.div>
           </div></div>
         </motion.div>
       </div>
