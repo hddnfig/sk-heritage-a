@@ -581,29 +581,49 @@ function News() {
         <a href="#"><img src={assetUrl("cta-arrow.png")} alt="" /><strong>자세히 보기</strong></a>
         <div className="exhibition-image"><motion.img src={assetUrl("news-exhibition-hover-v4.png")} alt="김수자 개인전" animate={{ scale: hovered === "exhibition" ? 1.025 : 1 }} transition={spring} /></div>
       </motion.article>
-      <div className="philosophy">
+      <motion.div
+        className="philosophy"
+        onHoverStart={() => setHovered("philosophy")}
+        onHoverEnd={() => setHovered(null)}
+        animate={{ backgroundColor: hovered === "philosophy" ? "#f05227" : "#e3edf4" }}
+        transition={{ duration: reduce ? 0 : .58, ease: [0.16, 1, 0.3, 1] }}
+      >
         <h2>그룹 철학</h2>
         <motion.div
           className="philosophy-photo-frame"
           initial={reduce ? false : { opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: reduce ? 0 : .9, delay: reduce ? 0 : 2.55, ease: [0.16, 1, 0.3, 1] }}
-        ><motion.img src={assetUrl("news-group-philosophy-v4.png")} alt="그룹 철학" whileHover={{ scale: 1.025 }} transition={spring} /></motion.div>
+        >
+          <motion.img
+            className="philosophy-photo-default"
+            src={assetUrl("news-group-philosophy-v4.png")}
+            alt="그룹 철학"
+            animate={{ opacity: hovered === "philosophy" ? 0 : 1 }}
+            transition={{ duration: reduce ? 0 : .5, ease: [0.16, 1, 0.3, 1] }}
+          />
+          <motion.img
+            className="philosophy-photo-hover"
+            src={assetUrl("news-group-philosophy-v3.png")}
+            alt=""
+            animate={{ opacity: hovered === "philosophy" ? 1 : 0, scale: hovered === "philosophy" ? 1 : 1.018 }}
+            transition={{ duration: reduce ? 0 : .7, ease: [0.16, 1, 0.3, 1] }}
+          />
+        </motion.div>
         <motion.p
           className="philosophy-note"
           initial={reduce ? false : { opacity: 0, y: 18, clipPath: "inset(0 0 100% 0)" }}
           animate={{ opacity: 1, y: 0, clipPath: "inset(0 0 0% 0)" }}
-          whileHover={{ x: 10 }}
           transition={{ duration: reduce ? 0 : .8, delay: reduce ? 0 : 3.35, ease: [0.16, 1, 0.3, 1] }}
         >최고의 경쟁력을 보유하고 장기적 생존 조건을 확보하여 지속적으로 경제적 가치, 사회적 가치, 구성원 행복을 창출해 나가는 회사가 SUPEX Company 입니다.</motion.p>
         <motion.div className="philosophy-label label-skms" initial={reduce ? false : { opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: reduce ? 0 : .65, delay: reduce ? 0 : .2, ease: [0.16, 1, 0.3, 1] }}>SK Managemtent System</motion.div>
         <motion.div className="philosophy-label label-supex" initial={reduce ? false : { opacity: 0, x: 28 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: reduce ? 0 : .65, delay: reduce ? 0 : 1.9, ease: [0.16, 1, 0.3, 1] }}>Super Excellent Level</motion.div>
         <div className="philosophy-type">
           <motion.img src={assetUrl("skms-symbol.png")} alt="SKMS" initial={reduce ? false : { opacity: 0, x: -36 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: reduce ? 0 : .72, delay: reduce ? 0 : .2, ease: [0.16, 1, 0.3, 1] }} />
-          <motion.i initial={reduce ? false : { scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: reduce ? 0 : 1.05, delay: reduce ? 0 : .82, ease: [0.16, 1, 0.3, 1] }} />
+          <motion.i initial={reduce ? false : { scaleX: 0 }} animate={{ scaleX: 1, backgroundColor: hovered === "philosophy" ? "#fff" : "#f05227" }} transition={{ scaleX: { duration: reduce ? 0 : 1.05, delay: reduce ? 0 : .82, ease: [0.16, 1, 0.3, 1] }, backgroundColor: { duration: reduce ? 0 : .5, ease: [0.16, 1, 0.3, 1] } }} />
           <motion.img src={assetUrl("supex-symbol.png")} alt="SUPEX" initial={reduce ? false : { opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: reduce ? 0 : .72, delay: reduce ? 0 : 1.9, ease: [0.16, 1, 0.3, 1] }} />
         </div>
-      </div>
+      </motion.div>
       {newsCards.map((item, index) => <motion.article key={item.title} className={`news-card card-${index}`} onHoverStart={() => setHovered(item.key)} onHoverEnd={() => setHovered(null)} animate={{ backgroundColor: hovered === item.key ? "#000" : "#e3edf4", color: hovered === item.key ? "#fff" : "#000", borderColor: item.key === "archive" ? "#000" : hovered === item.key ? "#fff" : "#000" }} transition={swift}><h3>{item.title.split("\n").map((line) => <span key={line}>{line}</span>)}</h3><div className="news-card-image"><img src={item.image} alt={item.alt} /></div><p>{item.body}</p></motion.article>)}
       <a className="news-board-link" href="#"><span>뉴스보드</span><img src={assetUrl("large-arrow.png")} alt="" /></a>
     </section>
