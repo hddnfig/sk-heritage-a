@@ -229,6 +229,7 @@ function Timeline() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const wheelLock = useRef(false);
   const lockedScrollY = useRef(0);
+  const previousEra = useRef(0);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -237,6 +238,8 @@ function Timeline() {
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.intersectionRatio >= 0.12) {
         if (!wasVisible) {
+          previousEra.current = 0;
+          setDisplayYear("1953");
           setEra(0);
           setDirection(1);
         }
@@ -254,10 +257,12 @@ function Timeline() {
 
   useEffect(() => {
     const target = timelineEras[era].year;
-    if (reduce) {
+    if (reduce || previousEra.current === era) {
+      previousEra.current = era;
       setDisplayYear(target);
       return;
     }
+    previousEra.current = era;
     const frames = target === "1970"
       ? ["1956", "1959", "1962", "1965", "1968", "1970"]
       : ["1967", "1964", "1961", "1958", "1955", "1953"];

@@ -80,7 +80,7 @@ main { width: 1920px; overflow: hidden; }
 .history-next-image img { width: 789px; height: 742px; max-width: none; object-fit: cover; object-position: left; transform-origin: center; }
 .history-alt .history-next-image img { width: 1182px; }
 
-.timeline-scroll-stage { position: relative; width: 1920px; height: 1620px; background: var(--paper); scroll-snap-align: start; scroll-snap-stop: always; }
+.timeline-scroll-stage { position: relative; width: 1920px; height: 1080px; background: var(--paper); scroll-snap-align: start; scroll-snap-stop: always; }
 .timeline { position: sticky; top: 0; z-index: 2; background: var(--paper); scroll-snap-align: none; }
 .timeline::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to right, transparent 509px, #000 509px, #000 510px, transparent 510px, transparent 999px, #000 999px, #000 1000px, transparent 1000px, transparent 1595px, #000 1595px, #000 1596px, transparent 1596px); pointer-events: none; }
 .timeline-statement { position: absolute; left: 20px; top: 20px; width: 396px; margin: 0; font-size: 32px; line-height: 1.35; font-weight: 500; }
