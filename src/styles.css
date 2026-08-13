@@ -69,7 +69,7 @@ main { width: 1920px; overflow: hidden; }
 .history-next { border-right: 0; padding: 106px 0 0 20px; text-align: left; }
 .history-next > div { width: 284px; height: 43px; display: flex; align-items: flex-end; justify-content: space-between; font-size: 18px; line-height: 1; }
 .large-arrow-static { width: 148px; height: 44px; object-fit: contain; }
-.history-next-image { width: calc(100% - 20px); height: 742px; margin-top: 20px; overflow: hidden; }
+.history-next > .history-next-image { display: block; width: calc(100% - 20px); height: 742px; margin-top: 20px; overflow: hidden; }
 .history-next-image img { width: 789px; height: 742px; max-width: none; object-fit: cover; object-position: left; transform-origin: center; }
 .history-alt .history-next-image img { width: 1182px; }
 
