@@ -9,22 +9,28 @@ const heroSlides = [
     label: "H.Space",
     title: "시간이 머무는 곳,\n선혜원",
     body: "선혜원은 자연과 전통 건축이 조화를 이루는 공간으로, SK가 오랜 시간 이어온 정신과 가치가 고요히 깃들어 있습니다. 계절에 따라 달라지는 풍경과 깊은 시간의 흔적을 따라 걸으며, 일상에서 잠시 벗어나 변하지 않는 헤리티지의 아름다움을 직접 경험해 보세요.",
-    image: "/assets/hero-palace-v2.png",
-    peek: "/assets/hero-garden-v2.png",
+    image: "/assets/hero-seonhyewon-v4.png",
+    peek: "/assets/hero-memorial-v4.png",
+    imageClass: "seonhyewon",
+    peekClass: "memorial",
   },
   {
-    label: "Archive",
-    title: "시간을 잇는 기록,\nSK Heritage",
-    body: "한 사람의 신념에서 시작된 길은 세대를 지나 이어졌습니다. 수많은 도전과 선택의 순간을 따라 오늘의 SK를 만든 생각과 실천을 만나보세요.",
-    image: "/assets/hero-garden-v2.png",
-    peek: "/assets/factory-v2.png",
+    label: "H.Space",
+    title: "두 거목의 뜻을 기리는 곳,\nSK기념관",
+    body: "SK기념관은 최종건 창업회장과 최종현 선대회장의 삶과 정신을 기리고, SK가 걸어온 도전과 성장의 역사를 되새기는 공간입니다. 두 회장의 발자취와 유품, SK의 성장 과정과 경영철학을 따라가며 오늘까지 이어지고 있는 SK의 도전과 혁신의 정신을 만나보세요.",
+    image: "/assets/hero-memorial-v4.png",
+    peek: "/assets/hero-oldhouse-v4.png",
+    imageClass: "memorial",
+    peekClass: "oldhouse",
   },
   {
-    label: "Collection",
-    title: "기억을 품은 사물,\n다음 시대의 가치",
-    body: "창업의 순간부터 성장의 과정까지, 시대의 흔적을 간직한 소장품을 통해 SK의 정신과 문화가 어떻게 이어져 왔는지 살펴봅니다.",
-    image: "/assets/collection-hall-v2.png",
-    peek: "/assets/loom-v2.png",
+    label: "H.Space",
+    title: "시작의 정신을 간직한 집,\nSK고택",
+    body: "최종건 창업회장과 최종현 선대회장이 태어나고 자란 생가를 복원한 SK고택은 SK의 시작과 기업가정신을 만나는 공간입니다. 1950~60년대의 모습을 담은 한옥과 전시 공간을 따라 걸으며, 사업보국과 인재양성으로 이어진 두 회장의 철학과 오늘의 SK를 만든 시작의 정신을 만나보세요.",
+    image: "/assets/hero-oldhouse-v4.png",
+    peek: "/assets/hero-seonhyewon-v4.png",
+    imageClass: "oldhouse",
+    peekClass: "seonhyewon",
   },
 ];
 
@@ -94,7 +100,7 @@ function Hero() {
       <div className="hero-control-row"><Pager index={index} previous={() => move(-1)} next={() => move(1)} /><span>{slide.label}</span></div>
       <motion.div className="hero-image" onHoverStart={() => setHovered(true)} onHoverEnd={() => setHovered(false)} animate={{ width: hovered ? 760 : 722 }} transition={spring}>
         <AnimatePresence initial={false} custom={direction} mode="popLayout">
-          <motion.img key={slide.image} src={slide.image} alt={slide.title.replace("\n", " ")} custom={direction} variants={{ enter: (d: number) => ({ x: d * 180, opacity: 0 }), show: { x: 0, opacity: 1 }, exit: (d: number) => ({ x: d * -80, opacity: 0 }) }} initial="enter" animate="show" exit="exit" transition={spring} />
+          <motion.img className={`hero-asset-${slide.imageClass}`} key={slide.image} src={slide.image} alt={slide.title.replace("\n", " ")} custom={direction} variants={{ enter: (d: number) => ({ x: d * 180, opacity: 0 }), show: { x: 0, opacity: 1 }, exit: (d: number) => ({ x: d * -80, opacity: 0 }) }} initial="enter" animate="show" exit="exit" transition={spring} />
         </AnimatePresence>
       </motion.div>
       <div className="hero-copy">
@@ -105,7 +111,7 @@ function Hero() {
           </motion.div>
         </AnimatePresence>
       </div>
-      <motion.button className="hero-peek" type="button" onClick={() => move(1)} aria-label="다음 콘텐츠 보기" whileHover={{ x: -10 }} transition={spring}><AnimatePresence initial={false} mode="popLayout"><motion.img key={slide.peek} src={slide.peek} alt="다음 장면" initial={{ x: 80, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -80, opacity: 0 }} transition={spring} /></AnimatePresence></motion.button>
+      <motion.button className="hero-peek" type="button" onClick={() => move(1)} aria-label="다음 콘텐츠 보기" whileHover={{ x: -10 }} transition={spring}><AnimatePresence initial={false} mode="popLayout"><motion.img className={`hero-asset-${slide.peekClass}`} key={slide.peek} src={slide.peek} alt="다음 장면" initial={{ x: 80, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -80, opacity: 0 }} transition={spring} /></AnimatePresence></motion.button>
     </section>
   );
 }

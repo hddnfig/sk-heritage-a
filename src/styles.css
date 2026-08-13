@@ -41,7 +41,10 @@ main { width: 1920px; overflow: hidden; }
 .pager button:last-child span { transform: rotate(225deg); }
 .pager b { display: block; height: 18px; font-weight: 400; line-height: 18px; }
 .hero-image { position: absolute; left: 510px; top: 524px; width: 722px; height: 536px; overflow: hidden; background: #ff9d9d; }
-.hero-image img { position: absolute; inset: 0; width: 731.7px; height: 547.89px; max-width: none; object-fit: cover; }
+.hero-image img { position: absolute; top: 0; max-width: none; object-fit: cover; }
+.hero-image img.hero-asset-seonhyewon { left: 0; width: 731.7px; height: 547.89px; }
+.hero-image img.hero-asset-memorial { left: -28px; width: 952.383px; height: 536px; }
+.hero-image img.hero-asset-oldhouse { left: -51px; width: 824px; height: 536px; }
 .hero-copy { position: absolute; left: 1252px; top: 524px; width: 344px; height: 536px; }
 .hero-copy-motion { height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
 .hero-copy h2 { margin: 0; font-size: 28px; line-height: 1.35; font-weight: 600; }
@@ -51,7 +54,10 @@ main { width: 1920px; overflow: hidden; }
 .figma-cta img { width: 68px; height: 24px; }
 .figma-cta strong { font-weight: 700; }
 .hero-peek { position: absolute; left: 1759px; top: 524px; width: 161px; height: 536px; overflow: hidden; text-align: left; }
-.hero-peek img { width: 952.383px; height: 536px; max-width: none; object-fit: cover; object-position: left; }
+.hero-peek img { position: absolute; top: 0; height: 536px; max-width: none; object-fit: cover; object-position: left; }
+.hero-peek img.hero-asset-memorial { left: 0; width: 952.383px; }
+.hero-peek img.hero-asset-oldhouse { left: 0; width: 824px; }
+.hero-peek img.hero-asset-seonhyewon { left: 0; width: 731.7px; height: 547.89px; }
 
 .history { background: #fff; border-top: 1px solid #000; border-bottom: 1px solid #000; }
 .history-frame { position: absolute; inset: -1px 20px 0; display: grid; grid-template-columns: 980px 596px 304px; overflow: hidden; }
