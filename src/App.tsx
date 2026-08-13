@@ -27,140 +27,6 @@ function DeferredSection({ id, className, children }: { id: string; className?: 
   return <motion.div className={`deferred-section-content ${className ?? ""}`} data-deferred-section={id} data-section-snap="true" initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduce ? 0 : 0.72, ease: [0.16, 1, 0.3, 1] }}>{children}</motion.div>;
 }
 
-function SectionSnapController() {
-  const reduce = useReducedMotion();
-  const snapLock = useRef(false);
-  const unlockTimer = useRef<number | undefined>(undefined);
-  const animationFrame = useRef<number | undefined>(undefined);
-  const minimumReleaseAt = useRef(0);
-  const lastWheelAt = useRef(0);
-  const activeTargetId = useRef("");
-
-  useEffect(() => {
-    const settleDurations: Record<string, number> = {
-      "hero-space": 900,
-      history: 1900,
-      space: 2100,
-      collection: 1200,
-      news: 1200,
-    };
-    const getTargets = () => {
-      const nodes = Array.from(document.querySelectorAll<HTMLElement>(
-        ".hero-snap-anchor, [data-section-snap='true']",
-      ));
-      return nodes
-        .map((node) => ({
-          node,
-          id: node.dataset.snapId ?? node.dataset.deferredSection ?? node.id,
-          top: window.scrollY + node.getBoundingClientRect().top,
-        }))
-        .sort((a, b) => a.top - b.top)
-        .filter((item, index, items) => index === 0 || Math.abs(item.top - items[index - 1].top) > 3);
-    };
-
-    const releaseWhenQuiet = () => {
-      if (unlockTimer.current !== undefined) window.clearTimeout(unlockTimer.current);
-      const now = performance.now();
-      const wait = Math.max(minimumReleaseAt.current - now, lastWheelAt.current + 240 - now, 0);
-      unlockTimer.current = window.setTimeout(() => {
-        const current = performance.now();
-        if (current < minimumReleaseAt.current || current - lastWheelAt.current < 230) {
-          releaseWhenQuiet();
-          return;
-        }
-        snapLock.current = false;
-        unlockTimer.current = undefined;
-        delete document.documentElement.dataset.sectionSnapLocked;
-        window.dispatchEvent(new CustomEvent("sk-section-snap-settled", { detail: { id: activeTargetId.current } }));
-      }, Math.max(16, wait));
-    };
-
-    const animateTo = (top: number, duration: number) => {
-      if (animationFrame.current !== undefined) cancelAnimationFrame(animationFrame.current);
-      const from = window.scrollY;
-      const distance = top - from;
-      if (duration === 0 || Math.abs(distance) < 1) {
-        window.scrollTo(0, top);
-        releaseWhenQuiet();
-        return;
-      }
-      const startedAt = performance.now();
-      const tick = (now: number) => {
-        const progress = Math.min(1, (now - startedAt) / duration);
-        const eased = 1 - Math.pow(1 - progress, 4);
-        window.scrollTo(0, from + distance * eased);
-        if (progress < 1) {
-          animationFrame.current = requestAnimationFrame(tick);
-          return;
-        }
-        animationFrame.current = undefined;
-        window.scrollTo(0, top);
-        releaseWhenQuiet();
-      };
-      animationFrame.current = requestAnimationFrame(tick);
-    };
-
-    const handleWheel = (event: WheelEvent) => {
-      if (Math.abs(event.deltaY) < 10 || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
-      if (snapLock.current) {
-        event.preventDefault();
-        lastWheelAt.current = performance.now();
-        releaseWhenQuiet();
-        return;
-      }
-      if (event.defaultPrevented) return;
-
-      const targets = getTargets();
-      if (targets.length < 2) return;
-      const currentY = window.scrollY;
-      const direction = event.deltaY > 0 ? 1 : -1;
-      const timeline = document.querySelector<HTMLElement>("#space");
-      if (timeline && Math.abs(timeline.getBoundingClientRect().top) <= 3) {
-        const timelineEra = Number(timeline.dataset.timelineEra ?? "0");
-        const timelinePhase = timeline.dataset.timelinePhase ?? "idle";
-        const timelineLocked = document.documentElement.dataset.timelineLocked === "true";
-        const timelineCanConsume = timelineLocked || timelinePhase !== "idle"
-          || (direction > 0 && timelineEra < timelineEras.length - 1)
-          || (direction < 0 && timelineEra > 0);
-        if (timelineCanConsume) return;
-      }
-      let targetIndex = -1;
-
-      if (direction > 0) {
-        targetIndex = targets.findIndex((item) => item.top > currentY + 8);
-      } else {
-        for (let index = targets.length - 1; index >= 0; index -= 1) {
-          if (targets[index].top < currentY - 8) {
-            targetIndex = index;
-            break;
-          }
-        }
-      }
-
-      if (targetIndex < 0) return;
-      event.preventDefault();
-      snapLock.current = true;
-      activeTargetId.current = targets[targetIndex].id;
-      lastWheelAt.current = performance.now();
-      const scrollDuration = reduce ? 0 : 720;
-      minimumReleaseAt.current = performance.now() + scrollDuration + (reduce ? 80 : settleDurations[activeTargetId.current] ?? 1000);
-      document.documentElement.dataset.sectionSnapLocked = activeTargetId.current;
-      window.dispatchEvent(new CustomEvent("sk-section-snap-start", { detail: { id: activeTargetId.current } }));
-      animateTo(targets[targetIndex].top, scrollDuration);
-    };
-
-    window.addEventListener("wheel", handleWheel, { passive: false, capture: true });
-    return () => {
-      window.removeEventListener("wheel", handleWheel, { capture: true });
-      if (unlockTimer.current !== undefined) window.clearTimeout(unlockTimer.current);
-      if (animationFrame.current !== undefined) cancelAnimationFrame(animationFrame.current);
-      delete document.documentElement.dataset.sectionSnapLocked;
-    };
-  }, [reduce]);
-
-  return null;
-}
-
 const heroSlides = [
   {
     label: "H.Space",
@@ -431,6 +297,7 @@ function Timeline() {
   const lastTimelineWheelAt = useRef(0);
   const sequenceTimers = useRef<number[]>([]);
   const previousEra = useRef(0);
+  const entrySnapArmed = useRef(true);
 
   useEffect(() => () => {
     if (unlockTimer.current !== undefined) window.clearTimeout(unlockTimer.current);
@@ -457,6 +324,7 @@ function Timeline() {
       if (entry.intersectionRatio < 0.04) {
         wasVisible = false;
         setIsVisible(false);
+        entrySnapArmed.current = true;
       }
     }, { threshold: [0.04, 0.12, 0.55] });
     observer.observe(section);
@@ -512,6 +380,21 @@ function Timeline() {
         return;
       }
       const bounds = section.getBoundingClientRect();
+      const visibleHeight = Math.max(0, Math.min(bounds.bottom, window.innerHeight) - Math.max(bounds.top, 0));
+      const visibleRatio = visibleHeight / Math.max(1, bounds.height);
+      if (entrySnapArmed.current && visibleRatio >= 0.5) {
+        event.preventDefault();
+        const exactTop = window.scrollY + bounds.top;
+        window.scrollTo(0, exactTop);
+        entrySnapArmed.current = false;
+        lockedScrollY.current = exactTop;
+        wheelLock.current = true;
+        lastTimelineWheelAt.current = performance.now();
+        transitionDoneAt.current = performance.now() + (reduce ? 40 : 2100);
+        document.documentElement.dataset.timelineLocked = "true";
+        releaseTimelineWhenQuiet();
+        return;
+      }
       const isPinned = Math.abs(bounds.top) <= 24;
       if (!isPinned) return;
       const step = event.deltaY > 0 ? 1 : -1;
@@ -661,7 +544,6 @@ function Footer() {
 export function App() {
   const reduce = useReducedMotion();
   return <main data-reduced-motion={reduce ? "true" : "false"}>
-    <SectionSnapController />
     <Hero />
     <DeferredSection id="history"><History /></DeferredSection>
     <DeferredSection id="space" className="deferred-timeline"><Timeline /></DeferredSection>
