@@ -254,9 +254,9 @@ function History() {
       <div className="history-frame">
         <motion.div
           className="history-primary"
-          initial={reduce ? false : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: reduce ? 0 : 1, delay: reduce ? 0 : 2.5, ease: [0.16, 1, 0.3, 1] }}
+          initial={reduce ? false : { opacity: 0, y: 18, scale: 0.992 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: reduce ? 0 : 1.35, delay: reduce ? 0 : 2.5, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="history-meta"><span>{slide.person}</span><span>{slide.range}</span></div>
           <AnimatePresence initial={false} custom={direction} mode="popLayout">
