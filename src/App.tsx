@@ -614,7 +614,7 @@ function News() {
             className="philosophy-photo-hover"
             src={assetUrl("news-group-philosophy-v3.png")}
             alt=""
-            animate={{ opacity: hovered === "philosophy" ? 1 : 0, scale: hovered === "philosophy" ? 1 : 1.018 }}
+            animate={{ opacity: hovered === "philosophy" ? 1 : 0 }}
             transition={{ duration: reduce ? 0 : .7, ease: [0.16, 1, 0.3, 1] }}
           />
         </motion.div>
