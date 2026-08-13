@@ -13,7 +13,7 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: auto !important; scroll-snap-type: y mandatory; }
+html { scroll-behavior: auto !important; scroll-snap-type: none; }
 body { margin: 0; min-width: 320px; background: var(--paper); overflow-x: hidden; }
 button, a { font: inherit; color: inherit; }
 button { padding: 0; border: 0; background: transparent; cursor: pointer; }

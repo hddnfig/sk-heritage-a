@@ -340,16 +340,19 @@ function Timeline() {
   const [active, setActive] = useState<number | null>(null);
   const [era, setEra] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [phase, setPhase] = useState<"idle" | "exit" | "year" | "enter">("idle");
   const [isVisible, setIsVisible] = useState(false);
   const [displayYear, setDisplayYear] = useState("1953");
   const sectionRef = useRef<HTMLElement | null>(null);
   const wheelLock = useRef(false);
   const lockedScrollY = useRef(0);
   const unlockTimer = useRef<number | undefined>(undefined);
+  const sequenceTimers = useRef<number[]>([]);
   const previousEra = useRef(0);
 
   useEffect(() => () => {
     if (unlockTimer.current !== undefined) window.clearTimeout(unlockTimer.current);
+    sequenceTimers.current.forEach(window.clearTimeout);
   }, []);
 
   useEffect(() => {
@@ -363,6 +366,7 @@ function Timeline() {
           setDisplayYear("1953");
           setEra(0);
           setDirection(1);
+          setPhase("idle");
         }
         wasVisible = true;
         setIsVisible(true);
@@ -418,11 +422,25 @@ function Timeline() {
       lockedScrollY.current = exactTop;
       wheelLock.current = true;
       setDirection(step);
-      setEra(next);
+      setPhase("exit");
+      sequenceTimers.current.forEach(window.clearTimeout);
+      sequenceTimers.current = [];
+
+      const exitDuration = reduce ? 20 : 1260;
+      const yearDuration = reduce ? 20 : 620;
+      const enterDuration = reduce ? 30 : 1960;
+      sequenceTimers.current.push(window.setTimeout(() => {
+        setEra(next);
+        setPhase("year");
+      }, exitDuration));
+      sequenceTimers.current.push(window.setTimeout(() => {
+        setPhase("enter");
+      }, exitDuration + yearDuration));
       unlockTimer.current = window.setTimeout(() => {
+        setPhase("idle");
         wheelLock.current = false;
         unlockTimer.current = undefined;
-      }, reduce ? 80 : 2100);
+      }, exitDuration + yearDuration + enterDuration);
     };
     window.addEventListener("wheel", handleWheel, { passive: false, capture: true });
     window.addEventListener("scroll", holdPinnedPosition, { passive: true });
@@ -436,27 +454,38 @@ function Timeline() {
   return (
     <div className="timeline-scroll-stage">
     <section ref={sectionRef} className="canvas-section timeline" id="space">
-      <AnimatePresence custom={direction} mode="sync">
-        <motion.h2 key={currentEra.year} className="timeline-statement" custom={direction} variants={{ enter: (d: number) => ({ x: d * 220, opacity: 0 }), show: { x: 0, opacity: 1 }, exit: (d: number) => ({ x: d * -160, opacity: 0 }) }} initial="enter" animate={isVisible ? "show" : "enter"} exit="exit" transition={{ duration: reduce ? 0.01 : 1.35, ease: [0.16, 1, 0.3, 1] }}>{currentEra.statement.map((line) => <span key={line}>{line}</span>)}</motion.h2>
-      </AnimatePresence>
+      <motion.h2
+        key={currentEra.year}
+        className="timeline-statement"
+        custom={direction}
+        variants={{
+          enter: (d: number) => ({ x: d * 220, opacity: 0 }),
+          parked: (d: number) => ({ x: d * 220, opacity: 0 }),
+          show: { x: 0, opacity: 1 },
+          leave: { x: -80, opacity: 0 },
+        }}
+        initial="enter"
+        animate={!isVisible ? "enter" : phase === "exit" ? "leave" : phase === "year" ? "parked" : "show"}
+        transition={{ duration: reduce ? 0.01 : phase === "exit" ? 0.7 : 1.25, ease: [0.16, 1, 0.3, 1] }}
+      >
+        {currentEra.statement.map((line) => <span key={line}>{line}</span>)}
+      </motion.h2>
       {currentEra.items.map((item, index) => (
-        <AnimatePresence initial={false} custom={{ direction, index }} mode="sync" key={item.slot}>
-          <motion.article
-            key={`${currentEra.year}-${item.slot}`}
-            className={`timeline-record era-${currentEra.year} slot-${item.slot}`}
-            custom={{ direction, index }}
-            variants={{
-              enter: ({ direction: d, index: i }: { direction: number; index: number }) => ({ x: d * (1920 + i * 180), opacity: 0 }),
-              show: ({ index: i }: { index: number }) => ({ x: 0, opacity: 1, transition: { duration: reduce ? 0.01 : 1.55, delay: reduce ? 0 : i * 0.18, ease: [0.16, 1, 0.3, 1] } }),
-              exit: ({ direction: d, index: i }: { direction: number; index: number }) => ({ x: d * -(1520 + i * 140), opacity: 0, transition: { duration: reduce ? 0.01 : 1.3, delay: reduce ? 0 : i * 0.1, ease: [0.4, 0, 0.2, 1] } }),
-            }}
-            initial="enter"
-            animate={isVisible ? "show" : "enter"}
-            exit="exit"
-            onHoverStart={() => setActive(index)}
-            onHoverEnd={() => setActive(null)}
-          ><motion.img src={item.image} alt={item.title} animate={{ scale: active === index ? 1.035 : 1 }} transition={spring} /><div><h3>{item.title}</h3><p>{item.body}</p></div></motion.article>
-        </AnimatePresence>
+        <motion.article
+          key={`${currentEra.year}-${item.slot}`}
+          className={`timeline-record era-${currentEra.year} slot-${item.slot}`}
+          custom={{ direction, index }}
+          variants={{
+            enter: ({ direction: d, index: i }: { direction: number; index: number }) => ({ x: d * (1920 + i * 180), opacity: 0 }),
+            parked: ({ direction: d, index: i }: { direction: number; index: number }) => ({ x: d * (1920 + i * 180), opacity: 0, transition: { duration: 0 } }),
+            show: ({ index: i }: { index: number }) => ({ x: 0, opacity: 1, transition: { duration: reduce ? 0.01 : 1.55, delay: reduce ? 0 : i * 0.18, ease: [0.16, 1, 0.3, 1] } }),
+            leave: ({ index: i }: { index: number }) => ({ x: -54 - i * 18, opacity: 0, transition: { duration: reduce ? 0.01 : 0.72, delay: reduce ? 0 : i * 0.2, ease: [0.4, 0, 0.2, 1] } }),
+          }}
+          initial="enter"
+          animate={!isVisible ? "enter" : phase === "exit" ? "leave" : phase === "year" ? "parked" : "show"}
+          onHoverStart={() => setActive(index)}
+          onHoverEnd={() => setActive(null)}
+        ><motion.img src={item.image} alt={item.title} animate={{ scale: active === index ? 1.035 : 1 }} transition={spring} /><div><h3>{item.title}</h3><p>{item.body}</p></div></motion.article>
       ))}
       <div className="timeline-year"><div className="timeline-year-wheel"><AnimatePresence initial={false} custom={direction}><motion.span key={displayYear} custom={direction} initial={{ y: direction * 64, rotateX: direction * 78, opacity: 0 }} animate={{ y: 0, rotateX: 0, opacity: 1 }} exit={{ y: direction * -64, rotateX: direction * -78, opacity: 0 }} transition={{ duration: reduce ? 0.01 : 0.085, ease: [0.22, 1, 0.36, 1] }}>{displayYear}</motion.span></AnimatePresence></div></div>
       <div className="year-navigation" aria-label="연도 선택">
