@@ -86,7 +86,7 @@ function Hero() {
     <section className="canvas-section hero" id="top">
       <div className="hero-title-symbol" aria-label="HERITAGE"><img src="/assets/heritage-symbol.png" alt="HERITAGE" /></div>
       <nav className="top-nav" aria-label="주요 메뉴">
-        <a href="#history">그룹역사</a><a href="#space">H.Space</a><a href="#collection">전시/소장품</a><a href="#news">뉴스보드</a>
+        <a href="#">그룹역사</a><a href="#">H.Space</a><a href="#">전시/소장품</a><a href="#">뉴스보드</a>
       </nav>
       <div className="hero-sk-symbol"><img src="/assets/sk-symbol.png" alt="SK" /></div>
       <p className="hero-intro">시간이 흘러도 변하지 않는 가치가 있습니다. 한 사람의 신념에서 시작된 길은 세대를 지나 이어지고,<br />수많은 도전과 선택의 순간들이 모여 오늘의 SK를 만들었습니다. 그 시간 속에 쌓인 이야기와 가치를<br />SK Heritage에서 만나보세요.</p>
