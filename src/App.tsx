@@ -229,7 +229,12 @@ function Timeline() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const wheelLock = useRef(false);
   const lockedScrollY = useRef(0);
+  const unlockTimer = useRef<number | undefined>(undefined);
   const previousEra = useRef(0);
+
+  useEffect(() => () => {
+    if (unlockTimer.current !== undefined) window.clearTimeout(unlockTimer.current);
+  }, []);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -273,16 +278,21 @@ function Timeline() {
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
+    const holdPinnedPosition = () => {
+      if (wheelLock.current && Math.abs(window.scrollY - lockedScrollY.current) > 1) {
+        window.scrollTo(0, lockedScrollY.current);
+      }
+    };
     const handleWheel = (event: WheelEvent) => {
       if (Math.abs(event.deltaY) < 18) return;
+      if (wheelLock.current) {
+        event.preventDefault();
+        holdPinnedPosition();
+        return;
+      }
       const bounds = section.getBoundingClientRect();
       const isPinned = Math.abs(bounds.top) <= 12;
       if (!isPinned) return;
-      if (wheelLock.current) {
-        event.preventDefault();
-        if (Math.abs(window.scrollY - lockedScrollY.current) > 1) window.scrollTo(0, lockedScrollY.current);
-        return;
-      }
       const step = event.deltaY > 0 ? 1 : -1;
       const next = Math.max(0, Math.min(timelineEras.length - 1, era + step));
       if (next === era) return;
@@ -293,10 +303,17 @@ function Timeline() {
       wheelLock.current = true;
       setDirection(step);
       setEra(next);
-      window.setTimeout(() => { wheelLock.current = false; }, reduce ? 80 : 1750);
+      unlockTimer.current = window.setTimeout(() => {
+        wheelLock.current = false;
+        unlockTimer.current = undefined;
+      }, reduce ? 80 : 2100);
     };
     window.addEventListener("wheel", handleWheel, { passive: false, capture: true });
-    return () => window.removeEventListener("wheel", handleWheel, { capture: true });
+    window.addEventListener("scroll", holdPinnedPosition, { passive: true });
+    return () => {
+      window.removeEventListener("wheel", handleWheel, { capture: true });
+      window.removeEventListener("scroll", holdPinnedPosition);
+    };
   }, [era, reduce]);
 
   const currentEra = timelineEras[era];
