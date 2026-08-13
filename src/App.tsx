@@ -114,6 +114,7 @@ function Hero() {
   const [transitioning, setTransitioning] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [peekHovered, setPeekHovered] = useState(false);
+  const initialPanelReveal = useRef(!reduce);
   const slide = heroSlides[index];
   const incomingIndex = transitioning ? targetIndex : (index + 1) % heroSlides.length;
   const incomingSlide = heroSlides[incomingIndex];
@@ -167,7 +168,16 @@ function Hero() {
           className="hero-panel hero-panel-current"
           initial={reduce ? false : { opacity: 0, x: 84 }}
           animate={{ opacity: transitioning ? 0 : 1, x: transitioning ? direction * -44 : 0 }}
-          transition={{ duration: reduce || !transitioning ? 0 : 0.58, ease: [0.76, 0, 0.24, 1] }}
+          transition={reduce
+            ? { duration: 0 }
+            : transitioning
+              ? { duration: 0.58, ease: [0.76, 0, 0.24, 1] }
+              : initialPanelReveal.current
+                ? { duration: 0.82, delay: 1.5, ease: [0.16, 1, 0.3, 1] }
+                : { duration: 0.58, ease: [0.76, 0, 0.24, 1] }}
+          onAnimationComplete={() => {
+            if (!transitioning) initialPanelReveal.current = false;
+          }}
         >
           <div className="hero-image" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
             <motion.img className={`hero-asset-${slide.imageClass}`} src={slide.image} alt={slide.title.replace("\n", " ")} animate={{ scale: hovered && !reduce ? 1.035 : 1 }} transition={spring} />
