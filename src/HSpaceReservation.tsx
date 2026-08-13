@@ -36,7 +36,7 @@ const SPACES = [
     id: "oldhouse",
     name: "SK고택",
     description: "기업가 정신의 시작과 생활의 흔적을 고택의 공간 속에서 살펴보는 관람",
-    location: "경기도 수원시 권선구 평동로76번길 5",
+    location: "경기도 수원시 권선구 평동로76번길 5지번",
     tour: "약 40분",
     operation: "9:00 ~ 18:00",
     image: "./assets/reservation/space-oldhouse.png",
@@ -45,12 +45,12 @@ const SPACES = [
 ] as const;
 
 const TIMES = [
-  { value: "10:00", available: true },
-  { value: "11:30", available: false },
-  { value: "14:00", available: true },
-  { value: "15:30", available: true },
-  { value: "17:00", available: true },
-  { value: "20:00", available: true },
+  { value: "10:00", available: true, status: "예약 가능" },
+  { value: "11:30", available: false, status: "예약 마감" },
+  { value: "14:00", available: true, status: "4자리 남음" },
+  { value: "15:30", available: true, status: "예약 가능" },
+  { value: "17:00", available: true, status: "예약 가능" },
+  { value: "20:00", available: true, status: "예약 가능" },
 ] as const;
 
 type SpaceId = (typeof SPACES)[number]["id"];
@@ -210,12 +210,6 @@ export default function HSpaceReservation() {
 
       <main className="hs-main">
         <section className="hs-hero" aria-labelledby="hs-page-title">
-          <motion.div
-            className="hs-hero-rule"
-            initial={reduce ? false : { scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: reduce ? 0 : 0.9, ease: EASE }}
-          />
           <Reveal className="hs-eyebrow" delay={0.08}>
             <span aria-hidden="true" /> VISIT RESERVATION
           </Reveal>
@@ -241,7 +235,6 @@ export default function HSpaceReservation() {
                     initial={reduce ? false : { opacity: 0, x: 72 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true, amount: 0.25 }}
-                    whileHover={reduce ? undefined : { y: -8 }}
                     transition={{ duration: reduce ? 0 : 0.8, delay: reduce ? 0 : index * 0.09, ease: EASE }}
                   >
                     <input
@@ -252,19 +245,18 @@ export default function HSpaceReservation() {
                       onChange={() => chooseSpace(space.id)}
                     />
                     <span className="hs-space-image">
-                      <motion.img
-                        src={space.image}
-                        alt={`${space.name} 전경`}
-                        animate={{ scale: selected && !reduce ? 1.035 : 1 }}
-                        transition={{ duration: reduce ? 0 : 0.72, ease: EASE }}
-                      />
+                      <img src={space.image} alt={`${space.name} 전경`} />
                     </span>
                     <span className="hs-space-copy">
                       <span className="hs-space-heading">
                         <strong>{space.name}</strong>
                         <span>{space.description}</span>
                       </span>
-                      <span className="hs-select-mark" aria-hidden="true">{selected ? "✓" : "↗"}</span>
+                      {selected ? (
+                        <span className="hs-select-mark" aria-hidden="true">
+                          <img src="./assets/reservation/space-selected-check.svg" alt="" />
+                        </span>
+                      ) : null}
                       <MetaRows space={space} />
                     </span>
                   </motion.label>
@@ -335,7 +327,7 @@ export default function HSpaceReservation() {
                         }}
                       />
                       <strong>{item.value}</strong>
-                      <span>{item.available ? "예약 가능" : "예약 마감"}</span>
+                      <span>{item.status}</span>
                     </label>
                   );
                 })}
