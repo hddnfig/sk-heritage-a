@@ -1,5 +1,6 @@
 import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import HSpaceReservation from "./HSpaceReservation";
 
 const assetUrl = (filename: string) => `./assets/${filename}`;
 
@@ -140,7 +141,7 @@ function Hero() {
       <span className="hero-snap-anchor" data-snap-id="hero-space" aria-hidden="true" />
       <motion.div className="hero-title-symbol" aria-label="HERITAGE" {...reveal(0.08, -24, 0)}><img src={assetUrl("heritage-symbol.png")} alt="HERITAGE" /></motion.div>
       <motion.nav className="top-nav" aria-label="주요 메뉴" {...reveal(0.2, 0, -14)}>
-        <a href="#">그룹역사</a><a href="#">H.Space</a><a href="#">전시/소장품</a><a href="#">뉴스보드</a>
+        <a href="#">그룹역사</a><a href="#/h-space">H.Space</a><a href="#">전시/소장품</a><a href="#">뉴스보드</a>
       </motion.nav>
       <motion.div className="hero-sk-symbol" {...reveal(0.32, 24, 0)}><img src={assetUrl("sk-symbol.png")} alt="SK" /></motion.div>
       <motion.p className="hero-intro" {...reveal(0.44)}>시간이 흘러도 변하지 않는 가치가 있습니다. 한 사람의 신념에서 시작된 길은 세대를 지나 이어지고,<br />수많은 도전과 선택의 순간들이 모여 오늘의 SK를 만들었습니다. 그 시간 속에 쌓인 이야기와 가치를<br />SK Heritage에서 만나보세요.</motion.p>
@@ -172,7 +173,7 @@ function Hero() {
               initial={reduce || index !== 0 ? false : { clipPath: "inset(0 0 100% 0)", y: 28, opacity: 0 }}
               animate={{ clipPath: "inset(0 0 0% 0)", y: 0, opacity: 1 }}
               transition={{ duration: reduce ? 0 : 0.92, delay: reduce ? 0 : 1.5, ease: [0.16, 1, 0.3, 1] }}
-            ><p>{slide.body}</p><a className="figma-cta" href="#collection"><img src={assetUrl("cta-arrow.png")} alt="" /><strong>방문예약하러가기</strong></a></motion.div>
+            ><p>{slide.body}</p><a className="figma-cta" href="#/h-space"><img src={assetUrl("cta-arrow.png")} alt="" /><strong>방문예약하러가기</strong></a></motion.div>
           </div></div>
         </motion.div>
         <motion.div
@@ -195,7 +196,7 @@ function Hero() {
               initial={false}
               animate={transitioning ? { clipPath: "inset(0 0 0% 0)", y: 0, opacity: 1 } : { clipPath: "inset(0 0 100% 0)", y: 28, opacity: 0 }}
               transition={{ duration: reduce ? 0 : 0.58, delay: reduce || !transitioning ? 0 : 1.28, ease: [0.16, 1, 0.3, 1] }}
-            ><p>{incomingSlide.body}</p><a className="figma-cta" href="#collection" tabIndex={transitioning ? 0 : -1}><img src={assetUrl("cta-arrow.png")} alt="" /><strong>방문예약하러가기</strong></a></motion.div>
+            ><p>{incomingSlide.body}</p><a className="figma-cta" href="#/h-space" tabIndex={transitioning ? 0 : -1}><img src={assetUrl("cta-arrow.png")} alt="" /><strong>방문예약하러가기</strong></a></motion.div>
           </div></div>
         </motion.div>
       </div>
@@ -579,11 +580,36 @@ function News() {
 }
 
 function Footer() {
-  return <footer className="footer"><div className="footer-statement"><h2>한 세대의 신념이,<br />다음 시대의 가치로.</h2><p>Built through time. Carried into tomorrow.</p></div><nav><a href="#history">그룹역사</a><a href="#space">H.Space</a><a href="#collection">전시/소장품</a><a href="#news">뉴스보드</a></nav><div className="footer-rule" /><img src={assetUrl("sk-logo-v2.png")} alt="SK Heritage" /><span>©SK HERITAGE MUSEUM, All Rights Reserved.</span></footer>;
+  return <footer className="footer"><div className="footer-statement"><h2>한 세대의 신념이,<br />다음 시대의 가치로.</h2><p>Built through time. Carried into tomorrow.</p></div><nav><a href="#history">그룹역사</a><a href="#/h-space">H.Space</a><a href="#collection">전시/소장품</a><a href="#news">뉴스보드</a></nav><div className="footer-rule" /><img src={assetUrl("sk-logo-v2.png")} alt="SK Heritage" /><span>©SK HERITAGE MUSEUM, All Rights Reserved.</span></footer>;
 }
 
 export function App() {
   const reduce = useReducedMotion();
+  const [hash, setHash] = useState(() => window.location.hash);
+
+  useEffect(() => {
+    const handleHashChange = () => setHash(window.location.hash);
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      if (hash === "#/h-space" || hash === "#/" || hash === "") {
+        window.scrollTo({ top: 0, behavior: "auto" });
+        return;
+      }
+
+      const sectionId = hash.startsWith("#/") ? hash.slice(2) : hash.slice(1);
+      if (sectionId) document.getElementById(sectionId)?.scrollIntoView();
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [hash]);
+
+  if (hash === "#/h-space") {
+    return <HSpaceReservation />;
+  }
+
   return <main data-reduced-motion={reduce ? "true" : "false"}>
     <Hero />
     <DeferredSection id="history"><History /></DeferredSection>
