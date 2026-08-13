@@ -276,13 +276,22 @@ function Collection() {
 }
 
 function News() {
-  const [hovered, setHovered] = useState<number | null>(null);
   return (
     <section className="canvas-section news" id="news">
-      <article className="exhibition"><div><h2>김수자 개인전 〈호흡 - 선혜원〉 개막</h2><p>고요한 숨결과 명상이 어우러진 공간은 과거와 현재, 존재와 공간이 교차하는 새로운 경험을 제시하며, 실재와 허상이 혼재된 유동적인 건축 환경을 형성한다.</p></div><a href="#top"><img src="/assets/cta-arrow.png" alt="" /><span>Exhibition</span></a><motion.div className="exhibition-image" whileHover="hover"><motion.img src="/assets/exhibition-v2.png" alt="김수자 개인전" variants={{ hover: { scale: 1.045 } }} transition={spring} /></motion.div></article>
-      <div className="philosophy"><h2>경영 철학</h2><motion.img className="philosophy-photo" src="/assets/spirit-v2.png" alt="경영 철학" whileHover={{ scale: 1.025 }} transition={spring} /><motion.p className="philosophy-note" whileHover={{ x: 10 }} transition={spring}>최고의 경쟁력을 보유하고 장기적 생존 조건을 확보하여 지속적으로 경제적 가치, 사회적 가치, 구성원 행복을 창출해 나가는 회사가 SUPEX Company 입니다.</motion.p><div className="philosophy-type"><img src="/assets/skms-symbol.png" alt="SKMS" /><i /><img src="/assets/supex-symbol.png" alt="SUPEX" /></div></div>
-      {[{ title: "선혜원 여름 관람\n예약 안내", body: "푸른 자연과 전통 건축이 조화를 이루는 선혜원의 여름 풍경을 만나보세요. 공간에 깃든 역사와 이야기를 깊이 경험할 수 있도록 사전 예약제로 관람 프로그램을 운영합니다." }, { title: "SK 디지털 헤리티지\n아카이브 오픈", body: "SK의 성장 과정과 시대별 주요 순간을 담은 디지털 헤리티지 아카이브가 새롭게 문을 열었습니다. 창업 초기의 기록부터 주요 소장품에 이르기까지 SK의 역사와 정신을 온라인에서 폭넓게 만나볼 수 있습니다." }].map((item, index) => <motion.article key={item.title} className={`news-card card-${index}`} onHoverStart={() => setHovered(index)} onHoverEnd={() => setHovered(null)} animate={{ backgroundColor: hovered === index ? "#f05327" : "#e3edf4", color: hovered === index ? "#fff" : "#000" }} transition={swift}><h3>{item.title.split("\n").map((line) => <span key={line}>{line}</span>)}</h3><p>{item.body}</p></motion.article>)}
-      <div className="news-list">{["시간을 잇는 기록,\nSK 헤리티지 특별전", "선혜원의\n건축과 예술", "사진으로 만나는\nSK의 시작"].map((title) => <a href="#top" key={title}>{title.split("\n").map((line) => <span key={line}>{line}</span>)}</a>)}</div>
+      <article className="exhibition">
+        <div><h2>김수자 개인전 〈호흡 – 선혜원〉 개막</h2><p>고요한 숨결과 명상이 어우러진 공간은 과거와 현재, 존재와 공간이 교차하는 새로운 경험을 제시하며, 실재와 허상이 혼재된 유동적인 건축 환경을 형성한다.</p></div>
+        <a href="#"><img src="/assets/cta-arrow.png" alt="" /><strong>자세히 보기</strong></a>
+        <motion.div className="exhibition-image" whileHover="hover"><motion.img src="/assets/news-exhibition-v3.png" alt="김수자 개인전" variants={{ hover: { scale: 1.045 } }} transition={spring} /></motion.div>
+      </article>
+      <div className="philosophy">
+        <h2>그룹 철학</h2>
+        <div className="philosophy-photo-frame"><motion.img src="/assets/news-group-philosophy-v3.png" alt="그룹 철학" whileHover={{ scale: 1.025 }} transition={spring} /></div>
+        <motion.p className="philosophy-note" whileHover={{ x: 10 }} transition={spring}>최고의 경쟁력을 보유하고 장기적 생존 조건을 확보하여 지속적으로 경제적 가치, 사회적 가치, 구성원 행복을 창출해 나가는 회사가 SUPEX Company 입니다.</motion.p>
+        <div className="philosophy-label label-skms">SK Managemtent System</div><div className="philosophy-label label-supex">Super Excellent Level</div>
+        <div className="philosophy-type"><img src="/assets/skms-symbol.png" alt="SKMS" /><i /><img src="/assets/supex-symbol.png" alt="SUPEX" /></div>
+      </div>
+      {[{ title: "선혜원 여름 관람\n예약 안내", image: "/assets/news-card-summer-v3.png", alt: "선혜원" , body: "푸른 자연과 전통 건축이 조화를 이루는 선혜원의 여름 풍경을 만나보세요. 공간에 깃든 역사와 이야기를 깊이 경험할 수 있도록 사전 예약제로 관람 프로그램을 운영합니다." }, { title: "SK 디지털 헤리티지\n아카이브 오픈", image: "/assets/news-card-archive-v3.png", alt: "SK 디지털 헤리티지 아카이브", body: "SK의 성장 과정과 시대별 주요 순간을 담은 디지털 헤리티지 아카이브가 새롭게 문을 열었습니다. 창업 초기의 기록부터 주요 소장품에 이르기까지 SK의 역사와 정신을 온라인에서 폭넓게 만나볼 수 있습니다." }].map((item, index) => <article key={item.title} className={`news-card card-${index}`}><h3>{item.title.split("\n").map((line) => <span key={line}>{line}</span>)}</h3><motion.img src={item.image} alt={item.alt} whileHover={{ scale: 1.025 }} transition={spring} /><p>{item.body}</p></article>)}
+      <a className="news-board-link" href="#"><span>뉴스보드</span><img src="/assets/large-arrow.png" alt="" /></a>
     </section>
   );
 }
