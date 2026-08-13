@@ -215,7 +215,7 @@ main { width: 1920px; overflow: hidden; }
 .news-card h3 { position: relative; z-index: 2; margin: 0; font-size: 28px; line-height: 1.35; font-weight: 600; }
 .news-card h3 span { display: block; }
 .news-card-image, .news-card-image > img { position: absolute; max-width: none; transform-origin: center; }
-.news-card.card-0 .news-card-image { left: 62px; top: 45px; width: 659px; height: 370px; }
+.news-card.card-0 .news-card-image { left: 66px; top: 117px; width: 424px; height: 299px; }
 .news-card.card-1 .news-card-image { left: 136px; top: 87px; width: 600px; height: 400px; }
 .news-card-image > img { inset: 0; width: 100%; height: 100%; object-fit: fill; }
 .news-card p { position: absolute; z-index: 2; left: 20px; right: 20px; bottom: 20px; margin: 0; font-size: 20px; line-height: 1.35; }

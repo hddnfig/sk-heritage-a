@@ -619,7 +619,7 @@ function Collection() {
 function News() {
   const [hovered, setHovered] = useState<string | null>(null);
   const newsCards = [
-    { key: "summer", title: "선혜원 여름 관람\n예약 안내", image: assetUrl("news-card-summer-v5.png"), alt: "선혜원", body: "푸른 자연과 전통 건축이 조화를 이루는 선혜원의 여름 풍경을 만나보세요. 공간에 깃든 역사와 이야기를 깊이 경험할 수 있도록 사전 예약제로 관람 프로그램을 운영합니다." },
+    { key: "summer", title: "선혜원 여름 관람\n예약 안내", image: assetUrl("news-card-summer-v6.png"), alt: "선혜원", body: "푸른 자연과 전통 건축이 조화를 이루는 선혜원의 여름 풍경을 만나보세요. 공간에 깃든 역사와 이야기를 깊이 경험할 수 있도록 사전 예약제로 관람 프로그램을 운영합니다." },
     { key: "archive", title: "SK 디지털 헤리티지\n아카이브 오픈", image: assetUrl("news-card-archive-v3.png"), alt: "SK 디지털 헤리티지 아카이브", body: "SK의 성장 과정과 시대별 주요 순간을 담은 디지털 헤리티지 아카이브가 새롭게 문을 열었습니다. 창업 초기의 기록부터 주요 소장품에 이르기까지 SK의 역사와 정신을 온라인에서 폭넓게 만나볼 수 있습니다." },
   ];
   return (
