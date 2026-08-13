@@ -193,6 +193,7 @@ function Hero() {
 }
 
 function History() {
+  const reduce = useReducedMotion();
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [nextHovered, setNextHovered] = useState(false);
@@ -208,10 +209,30 @@ function History() {
           </AnimatePresence>
         </div>
         <div className="history-copy">
-          <AnimatePresence initial={false} mode="wait">
-            <motion.div key={slide.title} initial={{ x: direction * 48, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: direction * -40, opacity: 0 }} transition={swift}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={slide.title}
+              initial={reduce ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={reduce ? { opacity: 0 } : { x: direction * -40, opacity: 0 }}
+              transition={{ duration: reduce ? 0 : 0.28, ease: [0.16, 1, 0.3, 1] }}
+            >
               <Pager index={index} total={historySlides.length} previous={() => move(-1)} next={() => move(1)} />
-              <h2>{slide.title}</h2><p className="history-body">{slide.body}</p>
+              <motion.h2
+                initial={reduce ? false : { clipPath: "inset(0 100% 0 0)", x: -12, opacity: 0 }}
+                animate={{ clipPath: "inset(0 0% 0 0)", x: 0, opacity: 1 }}
+                transition={{ duration: reduce ? 0 : 0.78, delay: reduce ? 0 : 0.08, ease: [0.16, 1, 0.3, 1] }}
+              >
+                {slide.title}
+              </motion.h2>
+              <motion.p
+                className="history-body"
+                initial={reduce ? false : { clipPath: "inset(0 0 100% 0)", y: 18, opacity: 0 }}
+                animate={{ clipPath: "inset(0 0 0% 0)", y: 0, opacity: 1 }}
+                transition={{ duration: reduce ? 0 : 0.86, delay: reduce ? 0 : 0.9, ease: [0.16, 1, 0.3, 1] }}
+              >
+                {slide.body}
+              </motion.p>
             </motion.div>
           </AnimatePresence>
         </div>

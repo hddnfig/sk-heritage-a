@@ -78,6 +78,7 @@ main { width: 1920px; overflow: hidden; }
 .history-alt .history-copy > div { width: 400px; }
 .history-copy h2 { margin: 16px 0 8px; font-size: 24px; line-height: 1.35; font-weight: 600; }
 .history-copy p { margin: 0; font-size: 20px; line-height: 1.35; }
+.history-copy h2, .history-body { transform-origin: left top; will-change: clip-path, transform, opacity; }
 .history-body { white-space: pre-line; }
 .history-next { border-right: 0; padding: 106px 0 0 20px; text-align: left; }
 .history-next > div { width: 284px; height: 43px; display: flex; align-items: flex-end; justify-content: space-between; font-size: 18px; line-height: 1; }
