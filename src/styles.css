@@ -147,6 +147,47 @@ main { width: 1920px; overflow: hidden; }
 .footer > img { position: absolute; left: 40px; top: 271px; width: 156px; height: 42px; object-fit: cover; }
 .footer > span { position: absolute; right: 40px; top: 292px; font-size: 16px; line-height: 1.3; }
 
+/* 1920px is the artboard baseline. Wider screens progressively reveal the
+   cropped continuation areas instead of stretching the original composition. */
+@media (min-width: 1921px) {
+  main,
+  .canvas-section,
+  .footer { width: 100%; }
+
+  .hero-peek { width: calc(100% - 1759px); }
+
+  .history-frame { grid-template-columns: 980px 596px minmax(304px, 1fr); }
+  .history-next > div { width: calc(100% - 20px); }
+
+  .timeline-year { left: auto; right: -84.5px; }
+  .year-bars { left: auto; right: 56px; }
+
+  .collection-center {
+    width: calc(100% - 834px);
+  }
+  .collection-center img {
+    width: 100%;
+  }
+  .collection-side {
+    left: auto;
+    right: 0;
+  }
+
+  .philosophy { width: calc(100% - 510px); }
+  .philosophy-type { width: calc(100% - 40px); }
+  .news-card.card-1 { width: calc(100% - 1324px); }
+  .news-list {
+    left: auto;
+    right: 0;
+  }
+
+  .footer nav {
+    left: auto;
+    right: 40px;
+  }
+  .footer-rule { width: calc(100% - 80px); }
+}
+
 @media (max-width: 1919px) {
   .canvas-section { width: 1920px; height: 1080px; min-height: 1080px; transform-origin: top left; transform: scale(calc(100vw / 1920)); margin-bottom: calc((100vw / 1920 * 1080px) - 1080px); }
   .footer { width: 1920px; transform-origin: top left; transform: scale(calc(100vw / 1920)); margin-bottom: calc((100vw / 1920 * 374px) - 374px); }
