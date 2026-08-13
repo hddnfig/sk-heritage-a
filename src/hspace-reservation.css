@@ -62,7 +62,8 @@
 .hs-space-card:last-child { border-right: 0; }
 .hs-space-card:not(.is-selected):hover { background: linear-gradient(rgba(255,119,81,.2),rgba(255,119,81,.2)),var(--hs-paper); }
 .hs-space-card.is-selected { background: var(--hs-coral); }
-.hs-space-card:focus-within { outline: 3px solid var(--hs-accent); outline-offset: -3px; }
+.hs-space-card:has(input:focus-visible) { outline: 3px solid var(--hs-accent); outline-offset: -3px; }
+.hs-space-card.is-selected:has(input:focus-visible) { outline: none; }
 .hs-space-image { width: 100%; height: 378px; flex: 0 0 378px; overflow: hidden; border-bottom: 1px solid #000; background: #ff9d9d; }
 .hs-space-image img { width: 100%; height: 100%; object-fit: cover; }
 .hs-space-copy { min-height: 0; flex: 1; position: relative; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
