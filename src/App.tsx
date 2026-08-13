@@ -89,6 +89,7 @@ function Hero() {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [hovered, setHovered] = useState(false);
+  const [peekHovered, setPeekHovered] = useState(false);
   const slide = heroSlides[index];
   const move = useCallback((step: number) => { setDirection(step); setIndex((current) => (current + step + 3) % 3); }, []);
   const reveal = (delay: number, x = 0, y = 18) => reduce
@@ -151,6 +152,8 @@ function Hero() {
         className="hero-peek"
         type="button"
         onClick={() => move(1)}
+        onHoverStart={() => setPeekHovered(true)}
+        onHoverEnd={() => setPeekHovered(false)}
         aria-label="다음 콘텐츠 보기"
         initial={reduce ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -159,7 +162,11 @@ function Hero() {
           opacity: { duration: reduce ? 0 : 0.9, delay: reduce ? 0 : 1.08, ease: [0.16, 1, 0.3, 1] },
           x: spring,
         }}
-      ><AnimatePresence initial={false} mode="popLayout"><motion.img className={`hero-asset-${slide.peekClass}`} key={slide.peek} src={slide.peek} alt="다음 장면" initial={{ x: 80, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -80, opacity: 0 }} transition={spring} /></AnimatePresence></motion.button>
+      >
+        <AnimatePresence initial={false} mode="popLayout"><motion.img className={`hero-asset-${slide.peekClass}`} key={slide.peek} src={slide.peek} alt="다음 장면" initial={{ x: 80, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -80, opacity: 0 }} transition={spring} /></AnimatePresence>
+        <motion.span className="hero-peek-dim" animate={{ opacity: peekHovered ? 1 : 0 }} transition={{ duration: reduce ? 0 : 0.55, ease: [0.16, 1, 0.3, 1] }} />
+        <motion.img className="hero-peek-arrow" src={assetUrl("large-arrow.png")} alt="" animate={{ opacity: peekHovered ? 1 : 0, x: peekHovered ? 0 : -24 }} transition={{ duration: reduce ? 0 : 0.72, ease: [0.16, 1, 0.3, 1] }} />
+      </motion.button>
     </section>
   );
 }
@@ -188,7 +195,7 @@ function History() {
           </AnimatePresence>
         </div>
         <motion.button className="history-next" type="button" onClick={() => move(1)} aria-label={`${slide.nextPerson} 보기`} onHoverStart={() => setNextHovered(true)} onHoverEnd={() => setNextHovered(false)} animate={{ backgroundColor: nextHovered ? "rgba(240, 83, 39, 0.09)" : "rgba(255, 255, 255, 0)" }} transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}>
-          <div><span>{slide.nextPerson}</span><motion.img className="large-arrow-static" src={assetUrl("large-arrow.png")} alt="" animate={nextHovered ? { x: [0, 24, 5, 24, 0], opacity: [1, .55, 1, .7, 1] } : { x: 0, opacity: 1 }} transition={nextHovered ? { duration: 1.45, ease: "easeInOut", repeat: Infinity } : spring} /></div>
+          <div><span>{slide.nextPerson}</span><motion.img className="large-arrow-static" src={assetUrl("large-arrow.png")} alt="" animate={nextHovered ? { x: [0, 18, 5, 18, 0], opacity: [1, .68, 1, .78, 1] } : { x: 0, opacity: 1 }} transition={nextHovered ? { duration: 3.2, ease: "easeInOut", repeat: Infinity, repeatDelay: 0.45 } : spring} /></div>
           <div className="history-next-image"><AnimatePresence initial={false} mode="popLayout"><motion.img key={slide.nextImage} src={slide.nextImage} alt={slide.nextPerson} initial={{ x: -90, opacity: 0 }} animate={{ x: 0, opacity: 1, scale: nextHovered ? 1.065 : 1 }} exit={{ x: 90, opacity: 0 }} transition={spring} /></AnimatePresence></div>
         </motion.button>
       </div>

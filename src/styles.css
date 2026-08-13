@@ -58,6 +58,8 @@ main { width: 1920px; overflow: hidden; }
 .hero-peek img.hero-asset-memorial { left: 0; width: 952.383px; }
 .hero-peek img.hero-asset-oldhouse { left: 0; width: 824px; }
 .hero-peek img.hero-asset-seonhyewon { left: 0; width: 731.7px; height: 547.89px; }
+.hero-peek-dim { position: absolute; z-index: 2; inset: 0; background: rgba(0,0,0,.36); pointer-events: none; }
+.hero-peek img.hero-peek-arrow { position: absolute; z-index: 3; left: 7px; top: calc(50% - 22px); width: 148px; height: 44px; object-fit: contain; filter: brightness(0) invert(1); pointer-events: none; }
 
 .history { background: #fff; border-top: 1px solid #000; border-bottom: 1px solid #000; }
 .history-frame { position: absolute; inset: -1px 20px 0; display: grid; grid-template-columns: 980px 596px 304px; overflow: hidden; }
