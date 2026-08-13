@@ -31,38 +31,99 @@ function SectionSnapController() {
   const reduce = useReducedMotion();
   const snapLock = useRef(false);
   const unlockTimer = useRef<number | undefined>(undefined);
+  const animationFrame = useRef<number | undefined>(undefined);
+  const minimumReleaseAt = useRef(0);
+  const lastWheelAt = useRef(0);
+  const activeTargetId = useRef("");
 
   useEffect(() => {
+    const settleDurations: Record<string, number> = {
+      "hero-space": 900,
+      history: 1900,
+      space: 2100,
+      collection: 1200,
+      news: 1200,
+    };
     const getTargets = () => {
       const nodes = Array.from(document.querySelectorAll<HTMLElement>(
         ".hero-snap-anchor, [data-section-snap='true']",
       ));
       return nodes
-        .map((node) => ({ node, top: window.scrollY + node.getBoundingClientRect().top }))
+        .map((node) => ({
+          node,
+          id: node.dataset.snapId ?? node.dataset.deferredSection ?? node.id,
+          top: window.scrollY + node.getBoundingClientRect().top,
+        }))
         .sort((a, b) => a.top - b.top)
         .filter((item, index, items) => index === 0 || Math.abs(item.top - items[index - 1].top) > 3);
     };
 
-    const releaseAfterGesture = () => {
+    const releaseWhenQuiet = () => {
       if (unlockTimer.current !== undefined) window.clearTimeout(unlockTimer.current);
+      const now = performance.now();
+      const wait = Math.max(minimumReleaseAt.current - now, lastWheelAt.current + 240 - now, 0);
       unlockTimer.current = window.setTimeout(() => {
+        const current = performance.now();
+        if (current < minimumReleaseAt.current || current - lastWheelAt.current < 230) {
+          releaseWhenQuiet();
+          return;
+        }
         snapLock.current = false;
         unlockTimer.current = undefined;
-      }, reduce ? 120 : 980);
+        delete document.documentElement.dataset.sectionSnapLocked;
+        window.dispatchEvent(new CustomEvent("sk-section-snap-settled", { detail: { id: activeTargetId.current } }));
+      }, Math.max(16, wait));
+    };
+
+    const animateTo = (top: number, duration: number) => {
+      if (animationFrame.current !== undefined) cancelAnimationFrame(animationFrame.current);
+      const from = window.scrollY;
+      const distance = top - from;
+      if (duration === 0 || Math.abs(distance) < 1) {
+        window.scrollTo(0, top);
+        releaseWhenQuiet();
+        return;
+      }
+      const startedAt = performance.now();
+      const tick = (now: number) => {
+        const progress = Math.min(1, (now - startedAt) / duration);
+        const eased = 1 - Math.pow(1 - progress, 4);
+        window.scrollTo(0, from + distance * eased);
+        if (progress < 1) {
+          animationFrame.current = requestAnimationFrame(tick);
+          return;
+        }
+        animationFrame.current = undefined;
+        window.scrollTo(0, top);
+        releaseWhenQuiet();
+      };
+      animationFrame.current = requestAnimationFrame(tick);
     };
 
     const handleWheel = (event: WheelEvent) => {
-      if (event.defaultPrevented || Math.abs(event.deltaY) < 18 || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+      if (Math.abs(event.deltaY) < 10 || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
       if (snapLock.current) {
         event.preventDefault();
-        releaseAfterGesture();
+        lastWheelAt.current = performance.now();
+        releaseWhenQuiet();
         return;
       }
+      if (event.defaultPrevented) return;
 
       const targets = getTargets();
       if (targets.length < 2) return;
       const currentY = window.scrollY;
       const direction = event.deltaY > 0 ? 1 : -1;
+      const timeline = document.querySelector<HTMLElement>("#space");
+      if (timeline && Math.abs(timeline.getBoundingClientRect().top) <= 3) {
+        const timelineEra = Number(timeline.dataset.timelineEra ?? "0");
+        const timelinePhase = timeline.dataset.timelinePhase ?? "idle";
+        const timelineLocked = document.documentElement.dataset.timelineLocked === "true";
+        const timelineCanConsume = timelineLocked || timelinePhase !== "idle"
+          || (direction > 0 && timelineEra < timelineEras.length - 1)
+          || (direction < 0 && timelineEra > 0);
+        if (timelineCanConsume) return;
+      }
       let targetIndex = -1;
 
       if (direction > 0) {
@@ -79,14 +140,21 @@ function SectionSnapController() {
       if (targetIndex < 0) return;
       event.preventDefault();
       snapLock.current = true;
-      window.scrollTo({ top: targets[targetIndex].top, behavior: reduce ? "auto" : "smooth" });
-      releaseAfterGesture();
+      activeTargetId.current = targets[targetIndex].id;
+      lastWheelAt.current = performance.now();
+      const scrollDuration = reduce ? 0 : 720;
+      minimumReleaseAt.current = performance.now() + scrollDuration + (reduce ? 80 : settleDurations[activeTargetId.current] ?? 1000);
+      document.documentElement.dataset.sectionSnapLocked = activeTargetId.current;
+      window.dispatchEvent(new CustomEvent("sk-section-snap-start", { detail: { id: activeTargetId.current } }));
+      animateTo(targets[targetIndex].top, scrollDuration);
     };
 
-    window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("wheel", handleWheel, { passive: false, capture: true });
     return () => {
-      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("wheel", handleWheel, { capture: true });
       if (unlockTimer.current !== undefined) window.clearTimeout(unlockTimer.current);
+      if (animationFrame.current !== undefined) cancelAnimationFrame(animationFrame.current);
+      delete document.documentElement.dataset.sectionSnapLocked;
     };
   }, [reduce]);
 
@@ -188,7 +256,7 @@ function Hero() {
       };
   return (
     <section className="canvas-section hero" id="top">
-      <span className="hero-snap-anchor" aria-hidden="true" />
+      <span className="hero-snap-anchor" data-snap-id="hero-space" aria-hidden="true" />
       <motion.div className="hero-title-symbol" aria-label="HERITAGE" {...reveal(0.08, -24, 0)}><img src={assetUrl("heritage-symbol.png")} alt="HERITAGE" /></motion.div>
       <motion.nav className="top-nav" aria-label="주요 메뉴" {...reveal(0.2, 0, -14)}>
         <a href="#">그룹역사</a><a href="#">H.Space</a><a href="#">전시/소장품</a><a href="#">뉴스보드</a>
@@ -347,12 +415,15 @@ function Timeline() {
   const wheelLock = useRef(false);
   const lockedScrollY = useRef(0);
   const unlockTimer = useRef<number | undefined>(undefined);
+  const transitionDoneAt = useRef(0);
+  const lastTimelineWheelAt = useRef(0);
   const sequenceTimers = useRef<number[]>([]);
   const previousEra = useRef(0);
 
   useEffect(() => () => {
     if (unlockTimer.current !== undefined) window.clearTimeout(unlockTimer.current);
     sequenceTimers.current.forEach(window.clearTimeout);
+    delete document.documentElement.dataset.timelineLocked;
   }, []);
 
   useEffect(() => {
@@ -398,6 +469,22 @@ function Timeline() {
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
+    const releaseTimelineWhenQuiet = () => {
+      if (unlockTimer.current !== undefined) window.clearTimeout(unlockTimer.current);
+      const now = performance.now();
+      const wait = Math.max(transitionDoneAt.current - now, lastTimelineWheelAt.current + 260 - now, 0);
+      unlockTimer.current = window.setTimeout(() => {
+        const current = performance.now();
+        if (current < transitionDoneAt.current || current - lastTimelineWheelAt.current < 250) {
+          releaseTimelineWhenQuiet();
+          return;
+        }
+        setPhase("idle");
+        wheelLock.current = false;
+        unlockTimer.current = undefined;
+        delete document.documentElement.dataset.timelineLocked;
+      }, Math.max(16, wait));
+    };
     const holdPinnedPosition = () => {
       if (wheelLock.current && Math.abs(window.scrollY - lockedScrollY.current) > 1) {
         window.scrollTo(0, lockedScrollY.current);
@@ -407,7 +494,9 @@ function Timeline() {
       if (Math.abs(event.deltaY) < 18) return;
       if (wheelLock.current) {
         event.preventDefault();
+        lastTimelineWheelAt.current = performance.now();
         holdPinnedPosition();
+        releaseTimelineWhenQuiet();
         return;
       }
       const bounds = section.getBoundingClientRect();
@@ -421,6 +510,8 @@ function Timeline() {
       window.scrollTo(0, exactTop);
       lockedScrollY.current = exactTop;
       wheelLock.current = true;
+      lastTimelineWheelAt.current = performance.now();
+      document.documentElement.dataset.timelineLocked = "true";
       setDirection(step);
       setPhase("exit");
       sequenceTimers.current.forEach(window.clearTimeout);
@@ -429,6 +520,7 @@ function Timeline() {
       const exitDuration = reduce ? 20 : 1260;
       const yearDuration = reduce ? 20 : 620;
       const enterDuration = reduce ? 30 : 1960;
+      transitionDoneAt.current = performance.now() + exitDuration + yearDuration + enterDuration;
       sequenceTimers.current.push(window.setTimeout(() => {
         setEra(next);
         setPhase("year");
@@ -436,11 +528,7 @@ function Timeline() {
       sequenceTimers.current.push(window.setTimeout(() => {
         setPhase("enter");
       }, exitDuration + yearDuration));
-      unlockTimer.current = window.setTimeout(() => {
-        setPhase("idle");
-        wheelLock.current = false;
-        unlockTimer.current = undefined;
-      }, exitDuration + yearDuration + enterDuration);
+      unlockTimer.current = window.setTimeout(releaseTimelineWhenQuiet, exitDuration + yearDuration + enterDuration);
     };
     window.addEventListener("wheel", handleWheel, { passive: false, capture: true });
     window.addEventListener("scroll", holdPinnedPosition, { passive: true });
@@ -453,7 +541,7 @@ function Timeline() {
   const currentEra = timelineEras[era];
   return (
     <div className="timeline-scroll-stage">
-    <section ref={sectionRef} className="canvas-section timeline" id="space">
+    <section ref={sectionRef} className="canvas-section timeline" id="space" data-timeline-era={era} data-timeline-phase={phase}>
       <motion.h2
         key={currentEra.year}
         className="timeline-statement"
