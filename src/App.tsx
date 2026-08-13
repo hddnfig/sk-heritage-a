@@ -228,6 +228,9 @@ function Timeline() {
         <div className="year-bars" aria-hidden="true">{Array.from({ length: 12 }).map((_, i) => <i key={i} className={i === currentEra.activeTick ? "active" : ""} />)}</div>
         <div className="year-hit-zones">{timelineEras.map((item, index) => <button key={item.year} type="button" aria-label={`${item.year}년 보기`} onClick={() => { setDirection(index > era ? 1 : -1); setEra(index); }} />)}</div>
       </div>
+      <motion.a className="timeline-skip" href="#collection" whileHover={{ y: 3 }} whileTap={{ scale: 0.98 }} transition={spring}>
+        <span>연혁 건너뛰기</span><i><img src="/assets/timeline-skip-arrow.svg" alt="" /></i>
+      </motion.a>
     </section>
   );
 }

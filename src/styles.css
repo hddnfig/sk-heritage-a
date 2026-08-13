@@ -103,6 +103,9 @@ main { width: 1920px; overflow: hidden; }
 .year-bars i.active { height: 4px; background: var(--accent); }
 .year-hit-zones { position: absolute; inset: 0; display: grid; grid-template-rows: repeat(2, 1fr); }
 .year-hit-zones button { width: 44px; height: 100%; }
+.timeline-skip { position: absolute; right: 20px; top: 1011px; z-index: 6; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px 20px; border: 1px solid #000; background: var(--paper); font-size: 20px; line-height: 1.35; white-space: nowrap; }
+.timeline-skip i { display: flex; width: 6px; height: 20px; align-items: center; justify-content: center; overflow: visible; }
+.timeline-skip img { width: 20px; height: 6px; max-width: none; transform: rotate(90deg); }
 
 .collection { background: #fff; border-top: 1px solid #000; border-bottom: 1px solid #000; }
 .collection-left { position: absolute; left: 0; width: 510px; height: 540px; overflow: hidden; border-right: 1px solid #000; text-align: left; }
