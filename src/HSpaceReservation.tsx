@@ -400,11 +400,11 @@ export default function HSpaceReservation() {
                   className="hs-submit"
                   type="submit"
                   disabled={!canSubmit}
-                  whileHover={canSubmit && !reduce ? { x: 4 } : undefined}
+                  whileHover={canSubmit && !reduce ? { opacity: 0.88 } : undefined}
                   whileTap={canSubmit && !reduce ? { scale: 0.985 } : undefined}
                   transition={{ duration: reduce ? 0 : 0.42, ease: EASE }}
                 >
-                  <span aria-hidden="true">|||</span> 방문 예약하기 <i aria-hidden="true">→</i>
+                  방문 예약하기
                 </motion.button>
                 <AnimatePresence>
                   {submitted ? (

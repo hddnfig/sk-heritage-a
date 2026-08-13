@@ -148,8 +148,7 @@
 .hs-summary dl > div { min-height: 48px; padding: 12px 0; display: grid; grid-template-columns: 180px 1fr; border-bottom: 1px solid rgba(0,0,0,.2); }
 .hs-summary dt { color: var(--hs-muted); font-size: 14px; }
 .hs-summary dd { margin: 0; font-size: 16px; font-weight: 600; }
-.hs-submit { position: relative; width: 100%; min-height: 46px; padding: 11px 24px; overflow: hidden; background: var(--hs-accent); color: #fff; font-size: 16px; text-align: center; clip-path: polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,9px 100%,0 calc(100% - 9px)); }
-.hs-submit:not(:disabled) { background: #000; }
+.hs-submit { position: relative; width: 100%; height: 46px; min-height: 46px; padding: 0 26px; overflow: hidden; background: transparent url('/assets/reservation-submit.svg') center / 100% 100% no-repeat; color: #fff; font-size: 16px; font-weight: 500; line-height: 1.35; text-align: center; }
 .hs-submit:disabled { opacity: 1; cursor: not-allowed; }
 .hs-success { margin: 8px 0 0; color: #1c5d3d; font-size: 13px; line-height: 1.35; }
 
