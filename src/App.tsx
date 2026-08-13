@@ -39,22 +39,13 @@ const historySlides = [
     nextImage: "/assets/chairman-v2.png",
   },
   {
-    person: "수출의 시대",
-    range: "1973 ~1998",
-    title: "1976 종합상사 설립, 수출 선봉에 서다.",
-    body: "인도네시아에 수출하기 위해 폴리에스터 원면을 선적하며 세계 시장을 향한 도전을 시작했습니다. 제조를 넘어 에너지와 통신으로 확장되는 성장의 기반이 이 시기에 만들어졌습니다.",
-    image: "/assets/export-v2.png",
-    nextPerson: "정보통신의 도약",
-    nextImage: "/assets/cdma-v2.png",
-  },
-  {
-    person: "정보통신의 도약",
-    range: "1980 ~현재",
-    title: "1996 세계 최초 CDMA 이동전화 상용화",
-    body: "한국이동통신은 세계 최초로 CDMA 이동전화 상용 서비스에 성공했습니다. 기술을 통해 더 넓은 가능성을 연결하며 세계 시장의 기준을 새롭게 만들었습니다.",
-    image: "/assets/cdma-v2.png",
+    person: "최종현 선대회장",
+    range: "1929–1998",
+    title: "일화1. 사람이 중요한 거야",
+    body: "최종현 선대회장은 항상 “사람이 먼저다.”라고 말했습니다. “기업에서 사람은 시작이자 마지막인 것 같습니다. 그만큼 사람은 중요합니다. 어떤 사람들과 일하느냐 하는 것은 개인뿐만 아니라 회사 전체로도 매우 중요한 일입니다.”\n\n한번은 큰 손해를 끼친 프로젝트에 대해 브리핑하는 시간을 갖게 되었습니다. 프로젝트 실패로 잔뜩 주눅이 들어 있는 책임자는 큰 손해를 봤다는 이유로 어찌할 바를 모르고 있었습니다. 이때 최종현 선대회장은 실수한 것을 나무라기보다 도리어 따뜻하게 격려해 주었습니다.\n\n“돈을 죽여도 사람을 죽이면 안 되지. 사람이 중요한 거야.”\n\n이렇듯 최종현 선대회장이 가장 중요시한 것은 첫째도, 둘째도 ‘사람’이었습니다.",
+    image: "/assets/chairman-history-v2.png",
     nextPerson: "최종건 창업회장",
-    nextImage: "/assets/founder-v2.png",
+    nextImage: "/assets/founder-history-preview-v2.png",
   },
 ];
 
@@ -74,12 +65,12 @@ function AssetArrowButton({ onClick, label, small = false }: { onClick: () => vo
   );
 }
 
-function Pager({ index, previous, next }: { index: number; previous: () => void; next: () => void }) {
+function Pager({ index, previous, next, total = 3 }: { index: number; previous: () => void; next: () => void; total?: number }) {
   return (
     <div className="pager">
       <i />
       <button type="button" onClick={previous} aria-label="이전"><span>‹</span></button>
-      <b>{String(index + 1).padStart(2, "0")}/03</b>
+      <b>{String(index + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}</b>
       <button type="button" onClick={next} aria-label="다음"><span>›</span></button>
     </div>
   );
@@ -122,9 +113,9 @@ function History() {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const slide = historySlides[index];
-  const move = (step: number) => { setDirection(step); setIndex((current) => (current + step + 3) % 3); };
+  const move = (step: number) => { setDirection(step); setIndex((current) => (current + step + historySlides.length) % historySlides.length); };
   return (
-    <section className="canvas-section history" id="history">
+    <section className={`canvas-section history ${index === 1 ? "history-alt" : ""}`} id="history">
       <div className="history-frame">
         <div className="history-primary">
           <div className="history-meta"><span>{slide.person}</span><span>{slide.range}</span></div>
@@ -135,14 +126,15 @@ function History() {
         <div className="history-copy">
           <AnimatePresence initial={false} mode="wait">
             <motion.div key={slide.title} initial={{ x: direction * 48, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: direction * -40, opacity: 0 }} transition={swift}>
-              <Pager index={index} previous={() => move(-1)} next={() => move(1)} />
-              <h2>{slide.title}</h2><p>{slide.body}</p>
+              <Pager index={index} total={historySlides.length} previous={() => move(-1)} next={() => move(1)} />
+              <h2>{slide.title}</h2><p className="history-body">{slide.body}</p>
             </motion.div>
           </AnimatePresence>
         </div>
-        <div className="history-next">
-          <div><span>{slide.nextPerson}</span><motion.img className="large-arrow-static" src="/assets/large-arrow.png" alt="" whileHover={{ x: 12 }} transition={spring} /></div><img src={slide.nextImage} alt={slide.nextPerson} />
-        </div>
+        <button className="history-next" type="button" onClick={() => move(1)} aria-label={`${slide.nextPerson} 보기`}>
+          <div><span>{slide.nextPerson}</span><motion.img className="large-arrow-static" src="/assets/large-arrow.png" alt="" whileHover={{ x: 12 }} transition={spring} /></div>
+          <AnimatePresence initial={false} mode="popLayout"><motion.img key={slide.nextImage} src={slide.nextImage} alt={slide.nextPerson} initial={{ x: -90, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 90, opacity: 0 }} transition={spring} /></AnimatePresence>
+        </button>
       </div>
     </section>
   );

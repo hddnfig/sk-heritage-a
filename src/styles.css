@@ -58,14 +58,18 @@ main { width: 1920px; overflow: hidden; }
 .history-primary { padding-top: 58px; }
 .history-meta { position: absolute; left: 0; right: 20px; top: 20px; height: 18px; z-index: 2; display: flex; justify-content: space-between; font-size: 18px; line-height: 1; }
 .history-primary > img { width: 1596px; height: 1002px; max-width: none; margin-left: -300px; object-fit: cover; }
+.history-alt .history-primary > img { width: 1378px; height: 1002px; margin-left: -156px; }
 .history-copy { display: flex; align-items: center; padding: 20px; }
 .history-copy > div { width: 555px; }
+.history-alt .history-copy > div { width: 400px; }
 .history-copy h2 { margin: 16px 0 8px; font-size: 24px; line-height: 1.35; font-weight: 600; }
 .history-copy p { margin: 0; font-size: 20px; line-height: 1.35; }
-.history-next { border-right: 0; padding: 106px 0 0 20px; }
+.history-body { white-space: pre-line; }
+.history-next { border-right: 0; padding: 106px 0 0 20px; text-align: left; }
 .history-next > div { width: 284px; height: 43px; display: flex; align-items: flex-end; justify-content: space-between; font-size: 18px; line-height: 1; }
 .large-arrow-static { width: 148px; height: 44px; object-fit: contain; }
 .history-next > img:last-child { width: 789px; height: 742px; max-width: none; margin-top: 20px; object-fit: cover; object-position: left; }
+.history-alt .history-next > img:last-child { width: 1182px; }
 
 .timeline { background: var(--paper); }
 .timeline-era { position: absolute; inset: 0; }
