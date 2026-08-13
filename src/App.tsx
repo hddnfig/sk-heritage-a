@@ -228,21 +228,21 @@ function History() {
               initial={reduce ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={reduce ? { opacity: 0 } : { x: direction * -40, opacity: 0 }}
-              transition={{ duration: reduce ? 0 : 0.28, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: reduce ? 0 : 0.5, ease: [0.16, 1, 0.3, 1] }}
             >
               <Pager index={index} total={historySlides.length} previous={() => move(-1)} next={() => move(1)} />
               <motion.h2
-                initial={reduce ? false : { clipPath: "inset(0 100% 0 0)", x: -12, opacity: 0 }}
-                animate={{ clipPath: "inset(0 0% 0 0)", x: 0, opacity: 1 }}
-                transition={{ duration: reduce ? 0 : 0.78, delay: reduce ? 0 : 0.08, ease: [0.16, 1, 0.3, 1] }}
+                initial={reduce ? false : { clipPath: "inset(0 100% 0 0)", x: -16, opacity: 0, filter: "blur(3px)" }}
+                animate={{ clipPath: "inset(0 0% 0 0)", x: 0, opacity: 1, filter: "blur(0px)" }}
+                transition={{ duration: reduce ? 0 : 1.15, delay: reduce ? 0 : 0.14, ease: [0.16, 1, 0.3, 1] }}
               >
                 {slide.title}
               </motion.h2>
               <motion.p
                 className="history-body"
-                initial={reduce ? false : { clipPath: "inset(0 0 100% 0)", y: 18, opacity: 0 }}
-                animate={{ clipPath: "inset(0 0 0% 0)", y: 0, opacity: 1 }}
-                transition={{ duration: reduce ? 0 : 0.86, delay: reduce ? 0 : 0.9, ease: [0.16, 1, 0.3, 1] }}
+                initial={reduce ? false : { clipPath: "inset(0 0 100% 0)", y: 24, opacity: 0, filter: "blur(2px)" }}
+                animate={{ clipPath: "inset(0 0 0% 0)", y: 0, opacity: 1, filter: "blur(0px)" }}
+                transition={{ duration: reduce ? 0 : 1.28, delay: reduce ? 0 : 1.12, ease: [0.16, 1, 0.3, 1] }}
               >
                 {slide.body}
               </motion.p>
