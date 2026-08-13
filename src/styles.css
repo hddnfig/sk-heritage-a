@@ -122,7 +122,8 @@ main { width: 1920px; overflow: hidden; }
 .timeline-statement { position: absolute; left: 20px; top: 20px; width: 396px; margin: 0; font-size: 32px; line-height: 1.35; font-weight: 500; }
 .timeline-statement span { display: block; white-space: nowrap; }
 .timeline-record { position: absolute; }
-.timeline-record > img { position: absolute; width: 100%; height: 100%; object-fit: cover; transform-origin: center; }
+.timeline-record-image { position: absolute; inset: 0; display: block; overflow: hidden; }
+.timeline-record-image > img { position: absolute; width: 100%; height: 100%; object-fit: cover; transform-origin: center; }
 .timeline-record > div { position: absolute; display: flex; flex-direction: column; gap: 16px; }
 .timeline-record h3 { margin: 0; font-size: 24px; line-height: 1.35; font-weight: 500; white-space: pre-line; }
 .timeline-record p { margin: 0; font-size: 20px; line-height: 1.35; }
@@ -130,8 +131,8 @@ main { width: 1920px; overflow: hidden; }
 .timeline-record.era-1953.slot-a > div { left: 0; top: 442px; width: 280px; }
 .timeline-record.era-1953.slot-b { left: 1235px; top: 160px; width: 415px; height: 260px; }
 .timeline-record.era-1953.slot-b > div { left: 0; top: 300px; width: 280px; }
-.timeline-record.era-1953.slot-c { left: 871px; top: 442px; width: 264px; height: 371px; overflow: hidden; }
-.timeline-record.era-1953.slot-c > img { width: 223.63%; max-width: none; object-position: left center; }
+.timeline-record.era-1953.slot-c { left: 871px; top: 442px; width: 264px; height: 371px; }
+.timeline-record.era-1953.slot-c .timeline-record-image > img { width: 223.63%; max-width: none; object-position: left center; }
 .timeline-record.era-1953.slot-c > div { left: 133px; top: 411px; width: 280px; }
 .timeline-record.era-1970.slot-a { left: 180px; top: 369px; width: 601px; height: 394px; }
 .timeline-record.era-1970.slot-a > div { left: 0; top: 434px; width: 280px; }

@@ -503,7 +503,7 @@ function Timeline() {
           animate={!isVisible ? "enter" : phase === "exit" ? "leave" : phase === "year" ? "parked" : "show"}
           onHoverStart={() => setActive(index)}
           onHoverEnd={() => setActive(null)}
-        ><motion.img src={item.image} alt={item.title} animate={{ scale: active === index ? 1.035 : 1 }} transition={spring} /><div><h3>{item.title}</h3><p>{item.body}</p></div></motion.article>
+        ><span className="timeline-record-image"><motion.img src={item.image} alt={item.title} animate={{ scale: active === index ? 1.035 : 1 }} transition={spring} /></span><div><h3>{item.title}</h3><p>{item.body}</p></div></motion.article>
       ))}
       <div className="timeline-year"><div className="timeline-year-wheel"><AnimatePresence initial={false} custom={direction}><motion.span key={displayYear} custom={direction} initial={{ y: direction * 64, rotateX: direction * 78, opacity: 0 }} animate={{ y: 0, rotateX: 0, opacity: 1 }} exit={{ y: direction * -64, rotateX: direction * -78, opacity: 0 }} transition={{ duration: reduce ? 0.01 : 0.085, ease: [0.22, 1, 0.36, 1] }}>{displayYear}</motion.span></AnimatePresence></div></div>
       <div className="year-navigation" aria-label="연도 선택">
