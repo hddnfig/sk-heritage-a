@@ -40,7 +40,7 @@
 .hs-nav a:hover::after, .hs-nav a:focus-visible::after, .hs-nav .is-active::after { right: 0; }
 
 .hs-main { width: 100%; }
-.hs-hero { position: relative; height: 175px; overflow: hidden; background: #fff; }
+.hs-hero { position: relative; height: 175px; overflow: hidden; border-bottom: 1px solid #000; background: #fff; }
 .hs-eyebrow { position: absolute; left: 20px; top: 0; display: flex; align-items: center; gap: 8px; font-size: 18px; line-height: 1.3; }
 .hs-eyebrow > span { width: 10px; height: 10px; background: var(--hs-accent); }
 .hs-hero-kicker { position: absolute; right: 20px; top: 0; margin: 0; color: rgba(0,0,0,.5); font-size: 14px; line-height: 1.35; }
