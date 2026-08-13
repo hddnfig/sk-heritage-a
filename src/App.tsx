@@ -261,9 +261,9 @@ function Timeline() {
 }
 
 const sideObjects = [
-  { className: "rooster", image: "/assets/object-rooster-v3.png", colorImage: "/assets/object-rooster-color-v3.png", label: "황금 장식품" },
-  { className: "glasses", image: "/assets/object-glasses-v3.png", colorImage: "/assets/object-glasses-color-v3.png", label: "안경과 소장품" },
-  { className: "clock", image: "/assets/object-clock-v3.png", colorImage: "/assets/object-clock-color-v3.png", label: "탁상시계" },
+  { className: "rooster", image: "/assets/object-rooster-v3.png", colorImage: "/assets/object-rooster-color-v4.png", label: "황금 장식품" },
+  { className: "glasses", image: "/assets/object-glasses-v3.png", colorImage: "/assets/object-glasses-color-v4.png", label: "안경과 소장품" },
+  { className: "clock", image: "/assets/object-clock-v3.png", colorImage: "/assets/object-clock-color-v4.png", label: "탁상시계" },
 ];
 
 function Collection() {
